@@ -1419,8 +1419,8 @@ button { touch-action: manipulation; }
         </div>
       </div>
 
-      <button class="btn-becca" onclick="/* TODO: 換成你的個人傳送門網址，例如: window.location.href='https://yoursite.com' */">
-        ✦ 進入 Becca 的專業診療空間
+      <button class="btn-becca" onclick="window.open('https://www.instagram.com/ccxaxr._.10/', '_blank')">
+        💊 前往重症患者諮詢室
       </button>
 
       <div class="case-section" id="caseSection">
@@ -2002,28 +2002,78 @@ async function downloadResult() {
   btn.style.pointerEvents = 'none';
 
   try {
+    // 1. 先把處方箋區塊截成圖
     const el = document.querySelector('.prescription-wrap');
-
-    const canvas = await html2canvas(el, {
+    const rxCanvas = await html2canvas(el, {
       scale: 2,
       useCORS: true,
-      backgroundColor: '#0a0412',
+      backgroundColor: null,
       logging: false,
       onclone: (doc) => {
         const wrap = doc.querySelector('.prescription-wrap');
         if (wrap) {
-          wrap.style.padding = '24px';
-          wrap.style.background = '#0a0412';
+          wrap.style.padding = '16px';
           wrap.style.borderRadius = '16px';
         }
       }
     });
 
+    // 2. 建立 1080x1920 的 IG 限動畫布
+    const W = 1080;
+    const H = 1920;
+    const storyCanvas = document.createElement('canvas');
+    storyCanvas.width = W;
+    storyCanvas.height = H;
+    const ctx = storyCanvas.getContext('2d');
+
+    // 背景漸層（配合遊戲主色調）
+    const bg = ctx.createRadialGradient(W * 0.3, H * 0.2, 0, W * 0.5, H * 0.5, H * 0.9);
+    bg.addColorStop(0, '#1e0a30');
+    bg.addColorStop(0.5, '#0d0520');
+    bg.addColorStop(1, '#0a0412');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // 裝飾：頂部 ECG 線條
+    ctx.strokeStyle = 'rgba(244,114,168,0.2)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    const ecgY = 160;
+    const pts = [0,ecgY, 80,ecgY, 110,ecgY-60, 140,ecgY+60, 170,ecgY-60, 200,ecgY+60, 230,ecgY, 400,ecgY, 430,ecgY-40, 460,ecgY+40, 490,ecgY, 700,ecgY, 730,ecgY-60, 760,ecgY+60, 790,ecgY-60, 820,ecgY+60, 850,ecgY, 1080,ecgY];
+    ctx.moveTo(pts[0], pts[1]);
+    for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i+1]);
+    ctx.stroke();
+
+    // 底部 ECG 線條
+    ctx.beginPath();
+    const ecgY2 = H - 160;
+    const pts2 = [0,ecgY2, 100,ecgY2, 130,ecgY2-50, 160,ecgY2+50, 190,ecgY2-50, 220,ecgY2+50, 250,ecgY2, 500,ecgY2, 530,ecgY2-60, 560,ecgY2+60, 590,ecgY2, 800,ecgY2, 830,ecgY2-50, 860,ecgY2+50, 890,ecgY2, 1080,ecgY2];
+    ctx.moveTo(pts2[0], pts2[1]);
+    for (let i = 2; i < pts2.length; i += 2) ctx.lineTo(pts2[i], pts2[i+1]);
+    ctx.stroke();
+
+    // 頂部標題
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(212,168,67,0.9)';
+    ctx.font = 'bold 42px sans-serif';
+    ctx.fillText('戀愛腦午夜特設門診', W / 2, 90);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '28px sans-serif';
+    ctx.fillText('MIDNIGHT LOVE-BRAIN CLINIC', W / 2, 135);
+
+    // 3. 把處方箋圖貼到畫布正中央
+    const rxW = Math.min(rxCanvas.width, W - 80); // 最寬 1000px，留邊
+    const rxH = rxCanvas.height * (rxW / rxCanvas.width);
+    const rxX = (W - rxW) / 2;
+    const rxY = (H - rxH) / 2;
+    ctx.drawImage(rxCanvas, rxX, rxY, rxW, rxH);
+
+    // 4. 下載
     const link = document.createElement('a');
     link.download = '戀愛腦診斷書.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = storyCanvas.toDataURL('image/png');
     link.click();
-    // 追蹤下載事件
+
     if (currentRecordId) trackEvent({ action: 'download', recordId: currentRecordId });
 
   } catch (e) {
