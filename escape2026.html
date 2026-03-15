@@ -1,0 +1,2573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>2026 社畜集體逃亡計畫</title>
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-N2XSKR52EZ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-N2XSKR52EZ');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --card: #1a1a24;
+  --accent: #ff3c3c;
+  --accent2: #ff8c00;
+  --gold: #ffd700;
+  --neon: #00ff88;
+  --text: #f0f0f0;
+  --muted: #888;
+  --border: rgba(255,60,60,0.2);
+  --stamp-red: #cc0000;
+  --stamp-dark: #8b0000;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.6;
+}
+
+/* ── SCREEN MANAGEMENT ── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── INTRO SCREEN ── */
+#screen-intro {
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 30%, #1a0000 0%, #0a0a0f 70%);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#screen-intro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,60,60,0.03) 40px, rgba(255,60,60,0.03) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,60,60,0.03) 40px, rgba(255,60,60,0.03) 41px);
+  pointer-events: none;
+}
+
+.intro-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.65rem;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.15em;
+  padding: 0.3rem 0.8rem;
+  margin-bottom: 1.5rem;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.intro-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 12vw, 7rem);
+  line-height: 0.9;
+  color: #fff;
+  letter-spacing: 0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+.intro-title span {
+  color: var(--accent);
+  text-shadow: 0 0 40px rgba(255,60,60,0.8), 0 0 80px rgba(255,60,60,0.4);
+}
+
+.intro-sub {
+  font-size: clamp(0.85rem, 3vw, 1.1rem);
+  color: var(--muted);
+  margin: 1.5rem 0 2.5rem;
+  line-height: 1.6;
+  max-width: 360px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  border: none;
+  cursor: pointer;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 0.05em;
+}
+
+.btn-primary:hover {
+  background: #ff5555;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(255,60,60,0.5);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.intro-deco {
+  position: absolute;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12rem;
+  color: rgba(255,60,60,0.04);
+  letter-spacing: -0.05em;
+  user-select: none;
+  pointer-events: none;
+  line-height: 1;
+}
+.intro-deco.d1 { top: -2rem; left: -2rem; }
+.intro-deco.d2 { bottom: -2rem; right: -2rem; }
+
+/* ── STEP HEADER ── */
+.step-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.step-num {
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.step-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── STEP 1: IDENTITY BUILDER ── */
+#screen-step1 {
+  background: var(--bg);
+}
+
+.identity-wrap {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.identity-wrap h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+.identity-wrap p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid rgba(255,60,60,0.25);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+.form-group input::placeholder { color: #555; }
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,60,60,0.15);
+}
+
+.form-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ff3c3c' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.form-group select option {
+  background: #1a1a24;
+}
+
+.code-preview {
+  background: var(--card);
+  border: 1px solid rgba(255,200,0,0.3);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  display: none;
+}
+
+.code-preview.show { display: block; }
+
+.code-preview .label {
+  font-size: 0.65rem;
+  font-family: 'Space Mono', monospace;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+
+.escape-code {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* ── STEP 2: BINGO ── */
+#screen-step2 {
+  background: var(--bg);
+}
+
+.bingo-wrap {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.bingo-wrap h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+
+.bingo-wrap .sub {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.bingo-cell {
+  background: var(--card);
+  border: 1px solid rgba(255,60,60,0.2);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+  font-weight: 700;
+  line-height: 1.3;
+  padding: 0.5rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+}
+
+.bingo-cell:hover { 
+  border-color: var(--accent);
+  background: rgba(255,60,60,0.08);
+}
+
+.bingo-cell.center {
+  background: linear-gradient(135deg, #1a0000, #2a0505);
+  border-color: rgba(255,60,60,0.5);
+  color: var(--accent);
+  font-size: clamp(0.65rem, 2.8vw, 0.8rem);
+  cursor: text;
+}
+
+/* center cell editable input overlay */
+.center-input-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  gap: 0.25rem;
+  z-index: 3;
+}
+
+.center-input-wrap textarea {
+  width: 100%;
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--accent);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: clamp(0.55rem, 2vw, 0.7rem);
+  font-weight: 700;
+  text-align: center;
+  resize: none;
+  line-height: 1.3;
+  caret-color: var(--accent);
+}
+
+.center-input-wrap textarea::placeholder {
+  color: rgba(255,60,60,0.35);
+  font-size: clamp(0.5rem, 1.8vw, 0.65rem);
+}
+
+.center-confirm-btn {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.center-confirm-btn:hover { background: #ff5555; }
+
+.bingo-cell.center-editing {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(255,60,60,0.3);
+  cursor: text;
+}
+
+/* STAMP */
+.bingo-cell .stamp {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(2) rotate(-15deg);
+  transition: none;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.bingo-cell.stamped .stamp {
+  animation: stamp-land 0.35s cubic-bezier(0.17, 0.67, 0.35, 1.2) forwards;
+}
+
+@keyframes stamp-land {
+  0% { opacity: 0; transform: scale(2.5) rotate(-15deg); }
+  60% { opacity: 1; transform: scale(0.9) rotate(-12deg); }
+  80% { transform: scale(1.05) rotate(-12deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-12deg); }
+}
+
+.stamp-svg {
+  width: 85%;
+  height: 85%;
+}
+
+.bingo-cell.stamped {
+  animation: cell-shake 0.35s ease;
+}
+
+@keyframes cell-shake {
+  0% { transform: translate(0,0); }
+  15% { transform: translate(-3px, 2px); }
+  30% { transform: translate(3px, -2px); }
+  45% { transform: translate(-2px, 2px); }
+  60% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 1px); }
+  100% { transform: translate(0,0); }
+}
+
+.bingo-cell.stamped::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(180,0,0,0.15);
+}
+
+.bingo-progress {
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 1.2rem;
+}
+
+.bingo-progress span { color: var(--accent); font-weight: 700; }
+
+.bingo-complete-msg {
+  display: none;
+  text-align: center;
+  padding: 0.8rem;
+  background: rgba(255,60,60,0.1);
+  border: 1px solid var(--accent);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  animation: fade-in 0.5s ease;
+}
+
+.bingo-complete-msg.show { display: block; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── STEP 3: RESIGNATION LETTER ── */
+#screen-step3 {
+  background: var(--bg);
+}
+
+.letter-wrap {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.letter-card {
+  background: var(--card);
+  border: 1px solid rgba(255,60,60,0.2);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.letter-card::before {
+  content: 'CONFIDENTIAL';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.55rem;
+  font-family: 'Space Mono', monospace;
+  color: rgba(255,60,60,0.4);
+  letter-spacing: 0.15em;
+}
+
+.letter-card .to {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.letter-card .boss {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.letter-card .from-code {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  background: rgba(255,215,0,0.08);
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--gold);
+}
+
+.letter-wrap h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.letter-textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid rgba(255,60,60,0.25);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.95rem;
+  padding: 1rem;
+  resize: vertical;
+  min-height: 140px;
+  outline: none;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+
+.letter-textarea:focus { border-color: var(--accent); }
+.letter-textarea::placeholder { color: #555; }
+
+.char-count {
+  text-align: right;
+  font-size: 0.7rem;
+  font-family: 'Space Mono', monospace;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+/* ── STEP 4: FLOATING WALL ── */
+#screen-step4 {
+  background: #000510;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.stars-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--d) ease-in-out infinite;
+  opacity: var(--o);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: var(--o); }
+  50% { opacity: calc(var(--o) * 0.2); }
+}
+
+.wall-header {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+.wall-header h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 40px rgba(255,60,60,0.6);
+}
+
+.wall-header p {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.new-bubble-submitted {
+  position: relative;
+  z-index: 10;
+  margin: 0 1rem 1rem;
+  background: rgba(255,60,60,0.15);
+  border: 1px solid rgba(255,60,60,0.4);
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--accent);
+  animation: slide-in-top 0.5s ease;
+}
+
+@keyframes slide-in-top {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.floating-area {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -80px;
+  background: rgba(20, 20, 35, 0.85);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  backdrop-filter: blur(8px);
+  padding: 0.7rem 1rem;
+  max-width: min(280px, 75vw);
+  font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+  line-height: 1.5;
+  border-radius: 2px;
+  pointer-events: all;
+  cursor: default;
+  animation: float-up var(--dur) linear forwards;
+  animation-delay: var(--delay);
+  opacity: 0;
+}
+
+.bubble::before {
+  content: '"';
+  font-size: 1.5rem;
+  color: var(--accent);
+  line-height: 0;
+  vertical-align: -0.3em;
+  margin-right: 0.2rem;
+  font-family: Georgia, serif;
+}
+
+.bubble:hover {
+  border-color: rgba(255,60,60,0.8);
+  box-shadow: 0 0 20px rgba(255,60,60,0.3), 0 0 40px rgba(255,60,60,0.1);
+  background: rgba(30, 10, 10, 0.95);
+  z-index: 20;
+}
+
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(0) translateX(0); }
+  5% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-110vh) translateX(var(--drift)); }
+}
+
+/* ── WALL END PANEL ── */
+.wall-end-panel {
+  position: relative;
+  z-index: 10;
+  margin: auto 1rem 2rem;
+  max-width: 400px;
+  width: calc(100% - 2rem);
+  align-self: center;
+  background: rgba(10, 10, 20, 0.85);
+  border: 1px solid rgba(255,60,60,0.25);
+  backdrop-filter: blur(12px);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.wall-end-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.wall-end-sub {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.btn-share {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: 0.95rem;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+}
+
+.btn-share:hover {
+  background: #ff5555;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255,60,60,0.4);
+}
+
+.wall-end-divider {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.2);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+.btn-home {
+  display: block;
+  width: 100%;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(255,215,0,0.4);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.5rem;
+  text-decoration: none;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.03em;
+}
+
+.btn-home:hover {
+  background: rgba(255,215,0,0.08);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.wall-end-ig {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 1.2rem;
+  width: 100%;
+}
+
+.wall-ig-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  transition: color 0.2s;
+}
+
+.wall-ig-link:hover { color: #fd1d1d; }
+
+.wall-ig-note {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.25);
+  font-family: 'Space Mono', monospace;
+  margin-top: 0.3rem;
+}
+
+/* ── WALL CTA (old, keep for floating ball spacing) ── */
+.wall-cta { display: none; }
+
+/* ── FLOATING IG BALL ── */
+.ig-ball {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+
+.ig-ball:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+
+.ig-ball svg { width: 24px; height: 24px; }
+
+.ig-tooltip {
+  position: fixed;
+  bottom: 4.2rem;
+  right: 1.5rem;
+  background: var(--card);
+  border: 1px solid rgba(255,60,60,0.3);
+  padding: 0.4rem 0.7rem;
+  font-size: 0.7rem;
+  font-family: 'Space Mono', monospace;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 998;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.ig-ball:hover ~ .ig-tooltip,
+.ig-tooltip:hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── HIDDEN DATA DASHBOARD ── */
+#screen-dashboard {
+  background: #000;
+  font-family: 'Space Mono', monospace;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#screen-dashboard.visible { display: flex; }
+
+.dashboard-header {
+  background: #000;
+  border-bottom: 1px solid var(--neon);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dashboard-header h2 {
+  color: var(--neon);
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 10px var(--neon);
+}
+
+.dashboard-close {
+  background: none;
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: background 0.2s;
+}
+
+.dashboard-close:hover { background: rgba(0,255,136,0.1); }
+
+.dashboard-body {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.db-section-title {
+  color: var(--neon);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  border-bottom: 1px solid rgba(0,255,136,0.2);
+  padding-bottom: 0.4rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 8px var(--neon);
+}
+
+.bingo-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 2rem;
+}
+
+.bingo-stat-cell {
+  background: rgba(0,255,136,0.05);
+  border: 1px solid rgba(0,255,136,0.2);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.bingo-stat-cell .count {
+  font-size: 1.4rem;
+  color: var(--neon);
+  font-weight: 700;
+  text-shadow: 0 0 10px var(--neon);
+}
+
+.bingo-stat-cell .label {
+  font-size: 0.5rem;
+  color: rgba(0,255,136,0.6);
+  line-height: 1.3;
+  margin-top: 0.2rem;
+}
+
+.confessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+}
+
+.confession-item {
+  background: rgba(0,255,136,0.04);
+  border-left: 2px solid var(--neon);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.72rem;
+  color: rgba(0,255,136,0.8);
+  line-height: 1.4;
+}
+
+.confession-item .meta {
+  font-size: 0.6rem;
+  color: rgba(0,255,136,0.4);
+  margin-top: 0.2rem;
+}
+
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon), transparent);
+  animation: scan 3s linear infinite;
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0.5;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0.5; }
+  100% { top: 100vh; opacity: 0.5; }
+}
+
+/* ── MISC UTILS ── */
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+  border-radius: 0;
+}
+
+.btn-secondary:hover {
+  background: rgba(255,60,60,0.1);
+  transform: translateY(-1px);
+}
+
+.step-footer {
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── BINGO LINE FLASH ── */
+.bingo-line-flash {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,0,0,0.15);
+  pointer-events: none;
+  z-index: 500;
+  opacity: 0;
+  animation: line-flash 0.6s ease forwards;
+}
+
+@keyframes line-flash {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── STEP 2.5: VERDICT SCREEN ── */
+#screen-verdict {
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+#screen-verdict::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,60,60,0.025) 60px, rgba(255,60,60,0.025) 61px),
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,60,60,0.025) 60px, rgba(255,60,60,0.025) 61px);
+  pointer-events: none;
+}
+
+.verdict-wrap {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.verdict-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 0;
+}
+
+.verdict-loading-bar {
+  width: 200px;
+  height: 3px;
+  background: rgba(255,60,60,0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.verdict-loading-bar::after {
+  content: '';
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: var(--accent);
+  animation: loading-sweep 0.9s ease-in-out forwards;
+}
+
+@keyframes loading-sweep {
+  0% { left: -60%; }
+  100% { left: 110%; }
+}
+
+.verdict-loading p {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  animation: blink-txt 0.6s step-end infinite;
+}
+
+@keyframes blink-txt {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.verdict-result {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  animation: verdict-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.verdict-result.show { display: flex; }
+
+@keyframes verdict-appear {
+  0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.verdict-stamp-ring {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 1.5rem auto;
+  flex-shrink: 0;
+}
+
+.verdict-stamp-ring svg {
+  width: 100%;
+  height: 100%;
+  animation: verdict-stamp-drop 0.5s cubic-bezier(0.17, 0.67, 0.35, 1.2) 0.1s both;
+  filter: drop-shadow(0 0 20px rgba(255,40,40,0.6));
+}
+
+@keyframes verdict-stamp-drop {
+  0% { opacity: 0; transform: scale(2) rotate(-20deg); }
+  60% { opacity: 1; transform: scale(0.92) rotate(-8deg); }
+  80% { transform: scale(1.04) rotate(-8deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-8deg); }
+}
+
+.verdict-title-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+}
+
+.verdict-rank {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.verdict-rank.rank-low { color: #7ec8e3; }
+.verdict-rank.rank-mid { color: var(--accent2); }
+.verdict-rank.rank-high {
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(255,60,60,0.7);
+}
+
+.verdict-score-bar {
+  width: 100%;
+  max-width: 300px;
+  margin: 0.8rem auto 1.2rem;
+}
+
+.verdict-score-track {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.verdict-score-fill {
+  height: 100%;
+  background: var(--accent);
+  width: 0%;
+  transition: width 1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+  position: relative;
+}
+
+.verdict-score-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: #fff;
+  box-shadow: 0 0 8px #fff;
+}
+
+.verdict-score-label {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.3rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.verdict-comment {
+  background: var(--card);
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.2rem;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text);
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 0.8rem;
+  position: relative;
+}
+
+.verdict-comment::before {
+  content: '鑑定結論';
+  position: absolute;
+  top: -0.6rem;
+  left: 0.8rem;
+  background: var(--bg);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  padding: 0 0.3rem;
+}
+
+.verdict-stamp-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.verdict-stamp-count strong { color: var(--accent); }
+
+.btn-war {
+  display: inline-block;
+  background: linear-gradient(135deg, #cc0000, #ff3c3c);
+  color: #fff;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  max-width: 380px;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-war::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.4s;
+}
+
+.btn-war:hover::before { transform: translateX(100%); }
+
+.btn-war:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(255,0,0,0.5);
+}
+
+.btn-war:active { transform: translateY(0); }
+
+.btn-download {
+  display: inline-block;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 2rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 380px;
+  margin-top: 0.6rem;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.btn-download:hover {
+  background: rgba(255,215,0,0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,215,0,0.2);
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9000;
+  border-radius: 50%;
+  animation: particle-fly var(--pt) ease-out forwards;
+}
+
+@keyframes particle-fly {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+}
+
+/* ── PROGRESS DOTS ── */
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+}
+
+.progress-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #333;
+  transition: background 0.3s;
+}
+
+.progress-dots span.active { background: var(--accent); }
+
+/* ── MOBILE TUNE ── */
+@media (max-width: 380px) {
+  .bingo-cell { font-size: 0.55rem; padding: 0.3rem; }
+  .intro-title { font-size: 2.5rem; }
+}
+
+/* ── iOS Safari 100vh fix ── */
+@supports (-webkit-touch-callout: none) {
+  .screen { min-height: -webkit-fill-available; }
+  #screen-intro { min-height: -webkit-fill-available; }
+}
+
+/* ── Safe area (iPhone notch / home bar) ── */
+.ig-ball {
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  right: calc(1.5rem + env(safe-area-inset-right));
+}
+
+.ig-tooltip {
+  bottom: calc(4.2rem + env(safe-area-inset-bottom));
+  right: calc(1.5rem + env(safe-area-inset-right));
+}
+
+.step-footer {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+}
+
+.wall-end-panel {
+  margin-bottom: calc(2rem + env(safe-area-inset-bottom));
+}
+
+/* ── Touch 體驗優化 ── */
+.btn-primary,
+.btn-secondary,
+.btn-war,
+.btn-download,
+.btn-share,
+.btn-home,
+.bingo-cell,
+.center-confirm-btn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 手機上按鈕點擊區域放大 */
+.btn-primary,
+.btn-war,
+.btn-share {
+  min-height: 52px;
+}
+
+.btn-secondary,
+.btn-download,
+.btn-home {
+  min-height: 48px;
+}
+
+/* 避免 iOS 自動放大 input */
+.form-group input,
+.form-group select,
+.letter-textarea,
+.center-input-wrap textarea {
+  font-size: max(1rem, 16px);
+}
+
+/* 手機上 select 不要被 iOS 樣式覆蓋 */
+.form-group select {
+  -webkit-appearance: none;
+}
+
+/* 彈幕牆底部不被 home bar 遮住 */
+#screen-step4 {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+</style>
+</head>
+<body>
+
+<!-- IG FLOATING BALL (always visible) -->
+<a class="ig-ball" href="https://www.instagram.com/ccxaxr._.10/" target="_blank" rel="noopener" title="Becca 的社畜收容所">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5"/>
+    <circle cx="12" cy="12" r="5"/>
+    <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
+  </svg>
+</a>
+<div class="ig-tooltip">Becca 的社畜收容所</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 0: INTRO
+══════════════════════════════════════════════ -->
+<section id="screen-intro" class="screen active">
+  <div class="intro-deco d1">逃</div>
+  <div class="intro-deco d2">亡</div>
+  <div class="intro-badge">⚠ 限社畜閱讀</div>
+  <h1 class="intro-title" id="title-trigger">2026<br><span>社畜集體</span><br>逃亡計畫</h1>
+  <p class="intro-sub">你是否曾經對著螢幕默默嘆氣？<br>我們來替你出口怒氣。</p>
+  <button class="btn-primary" onclick="goToStep(1);gtag('event','btn_click',{event_category:'escape2026',event_label:'加入逃亡_開始',value:10})">我要加入逃亡 →</button>
+  <p style="margin-top:1rem;font-size:0.7rem;color:#444;font-family:'Space Mono',monospace;">每個靈魂都值得被解放</p>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 1: IDENTITY BUILDER
+══════════════════════════════════════════════ -->
+<section id="screen-step1" class="screen">
+  <div class="step-header">
+    <span class="step-num">01 / 04</span>
+    <span class="step-title">身分組裝室</span>
+  </div>
+  <div class="identity-wrap">
+    <h2>告訴我<br>你是誰</h2>
+    <p>先讓我們知道你的逃生身分，才能幫你組建逃亡檔案。</p>
+
+    <div class="form-group">
+      <label>身高 (cm)</label>
+      <input type="number" id="inp-height" placeholder="例：168" min="140" max="220">
+    </div>
+
+    <div class="form-group">
+      <label>星座</label>
+      <select id="inp-zodiac">
+        <option value="">── 選擇星座 ──</option>
+        <option>牡羊座</option><option>金牛座</option><option>雙子座</option>
+        <option>巨蟹座</option><option>獅子座</option><option>處女座</option>
+        <option>天秤座</option><option>天蠍座</option><option>射手座</option>
+        <option>摩羯座</option><option>水瓶座</option><option>雙魚座</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>職務 / 職稱</label>
+      <input type="text" id="inp-role" placeholder="例：行銷企劃、工程師、設計師">
+    </div>
+
+    <div class="form-group">
+      <label>所在地區</label>
+      <select id="inp-region">
+        <option value="">── 選擇縣市 ──</option>
+        <option>台北市</option><option>新北市</option><option>桃園市</option>
+        <option>台中市</option><option>台南市</option><option>高雄市</option>
+        <option>新竹市</option><option>新竹縣</option><option>苗栗縣</option>
+        <option>彰化縣</option><option>南投縣</option><option>雲林縣</option>
+        <option>嘉義市</option><option>嘉義縣</option><option>屏東縣</option>
+        <option>宜蘭縣</option><option>花蓮縣</option><option>台東縣</option>
+        <option>澎湖縣</option><option>金門縣</option><option>連江縣</option>
+        <option>基隆市</option>
+      </select>
+    </div>
+
+    <div class="code-preview" id="code-preview">
+      <div class="label">// 你的逃生代號</div>
+      <div class="escape-code" id="escape-code-display"></div>
+    </div>
+  </div>
+
+  <div class="step-footer">
+    <button class="btn-primary" onclick="submitIdentity();gtag('event','btn_click',{event_category:'escape2026',event_label:'生成逃生代號',value:8})" style="width:100%">生成逃生代號 ▶</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 2: BINGO
+══════════════════════════════════════════════ -->
+<section id="screen-step2" class="screen">
+  <div class="step-header">
+    <span class="step-num">02 / 04</span>
+    <span class="step-title">2026 爆氣賓果</span>
+  </div>
+  <div class="bingo-wrap">
+    <h2>職場 BINGO</h2>
+    <p class="sub">點擊你中過的招 — 蓋章發洩吧</p>
+
+    <div class="bingo-grid" id="bingo-grid"></div>
+
+    <div class="bingo-progress">已蓋 <span id="stamp-count">0</span> / 9 格</div>
+    <div class="bingo-complete-msg" id="bingo-complete">🔥 BINGO！你完全中獎了，要逃的理由多到數不清！</div>
+  </div>
+
+  <div class="step-footer" style="display:flex;gap:0.8rem">
+    <button class="btn-secondary" onclick="goToStep(1)">← 返回</button>
+    <button class="btn-primary" onclick="goToVerdict()" style="flex:1">查看鑑定結果 →</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 2.5: VERDICT
+══════════════════════════════════════════════ -->
+<section id="screen-verdict" class="screen">
+  <div class="step-header">
+    <span class="step-num">02.5 / 04</span>
+    <span class="step-title">職場損耗鑑定報告</span>
+  </div>
+  <div class="verdict-wrap">
+
+    <!-- loading state -->
+    <div class="verdict-loading" id="verdict-loading">
+      <p>ANALYZING SOUL DAMAGE...</p>
+      <div class="verdict-loading-bar"></div>
+    </div>
+
+    <!-- result state -->
+    <div class="verdict-result" id="verdict-result">
+      <div class="verdict-title-tag">職場損耗等級鑑定</div>
+
+      <div class="verdict-stamp-ring" id="verdict-stamp-svg"></div>
+
+      <div class="verdict-rank" id="verdict-rank-text"></div>
+
+      <div class="verdict-score-bar">
+        <div class="verdict-score-track">
+          <div class="verdict-score-fill" id="verdict-score-fill"></div>
+        </div>
+        <div class="verdict-score-label">
+          <span>身心健康</span>
+          <span id="verdict-score-num"></span>
+          <span>瀕臨崩潰</span>
+        </div>
+      </div>
+
+      <div class="verdict-stamp-count">
+        已蓋章 <strong id="verdict-stamped-num">0</strong> / 9 格
+      </div>
+
+      <div class="verdict-comment" id="verdict-comment-text"></div>
+
+      <button class="btn-war" onclick="goToStep(3)">
+        📄 領取虛擬離職信，向白癡老闆宣戰
+      </button>
+
+      <button class="btn-download" id="btn-download" onclick="downloadVerdictImage();gtag('event','btn_click',{event_category:'escape2026',event_label:'下載逃亡證書',value:8})">
+        📸 下載鑑定結果圖
+      </button>
+
+      <button class="btn-secondary" onclick="goToStep(2)" style="margin-top:0.8rem;width:100%;max-width:380px">← 回去再蓋幾格</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 3: RESIGNATION LETTER
+══════════════════════════════════════════════ -->
+<section id="screen-step3" class="screen">
+  <div class="step-header">
+    <span class="step-num">03 / 04</span>
+    <span class="step-title">虛擬離職申請書</span>
+  </div>
+  <div class="letter-wrap">
+    <h2>想說的話<br>都說出來</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1.2rem;line-height:1.5">我們幫你寫進申請書，匿名飄上彈幕牆，讓全台社畜都看見。</p>
+
+    <div class="letter-card">
+      <div class="to">致：</div>
+      <div class="boss">那個讓我想逃亡的人</div>
+      <div class="from-code" id="letter-code-display">逃生代號：載入中...</div>
+      <p style="font-size:0.78rem;color:var(--muted);line-height:1.5">本人在充分考慮後決定提出離職申請，感謝公司提供的血汗機會，但本人的靈魂需要喘息空間...</p>
+    </div>
+
+    <div>
+      <label style="font-size:0.75rem;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:0.1em;display:block;margin-bottom:0.4rem">你想對老闆說的話</label>
+      <textarea class="letter-textarea" id="boss-message" placeholder="說吧，這裡安全。例如：你每次說的「做完就下班」根本是謊言..."></textarea>
+      <div class="char-count"><span id="char-num">0</span> 字</div>
+    </div>
+  </div>
+
+  <div class="step-footer" style="display:flex;gap:0.8rem">
+    <button class="btn-secondary" onclick="goToStep(2)">← 返回</button>
+    <button class="btn-primary" onclick="submitLetter();gtag('event','btn_click',{event_category:'escape2026',event_label:'提交辭職申請書',value:10})" style="flex:1">提交申請書 🚀</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN 4: FLOATING WALL
+══════════════════════════════════════════════ -->
+<section id="screen-step4" class="screen">
+  <canvas class="stars-bg" id="stars-canvas"></canvas>
+  <div class="floating-area" id="floating-area"></div>
+
+  <div class="wall-header">
+    <h2>爆氣彈幕牆</h2>
+    <p>所有社畜的心聲正在夜空中飄浮</p>
+  </div>
+
+  <div class="new-bubble-submitted" id="submitted-preview" style="display:none"></div>
+
+  <div class="wall-end-panel">
+
+    <div class="wall-end-title">你的爆氣<br>已飛向夜空 🔥</div>
+    <p class="wall-end-sub">還有朋友在默默受苦嗎？<br>把這個遊戲傳給他們，一起逃亡！</p>
+
+    <!-- 分享遊戲 -->
+    <button class="btn-share" onclick="shareGame();gtag('event','btn_click',{event_category:'escape2026',event_label:'分享遊戲',value:8})">
+      <span id="share-btn-text">🔗 複製遊戲連結，揪朋友一起爆氣</span>
+    </button>
+
+    <div class="wall-end-divider">── 或者 ──</div>
+
+    <!-- 回主頁 -->
+    <a class="btn-home" href="https://becca.com" target="_blank" rel="noopener">
+      🏠 回到 Becca 的遊樂場
+    </a>
+
+    <!-- IG -->
+    <div class="wall-end-ig">
+      <a href="https://www.instagram.com/ccxaxr._.10/" target="_blank" rel="noopener" class="wall-ig-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+        追蹤 @ccxaxr._.10
+      </a>
+      <p class="wall-ig-note">Becca 的社畜收容所 · 更多職場生存遊戲</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     HIDDEN DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="screen-dashboard">
+  <div class="scan-line"></div>
+  <div class="dashboard-header">
+    <h2>⚡ 戰情室 / DATA INTEL</h2>
+    <button class="dashboard-close" onclick="closeDashboard()">[ 關閉 ]</button>
+  </div>
+  <div class="dashboard-body">
+    <div class="db-section-title">▶ BINGO 格被蓋章次數統計</div>
+    <div class="bingo-stats-grid" id="db-bingo-stats"></div>
+
+    <div class="db-section-title" style="margin-top:2rem">▶ 最新匿名真心話</div>
+    <div class="confessions-list" id="db-confessions"></div>
+
+    <div style="font-size:0.6rem;color:rgba(0,255,136,0.2);margin-top:1rem;text-align:center;letter-spacing:0.1em">
+      DATA IS POWER · BECCA INTELLIGENCE UNIT 2026
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA STORE
+// ══════════════════════════════════════════════
+const BINGO_LABELS = [
+  "主管沒專業，溝通全靠「不懂裝懂」",
+  "領一份薪水，被要求做多個人的事",
+  "獎金年終「說說而已」，看老闆心情",
+  "5萬的預算，叫我做出50萬的成果",
+  "每天都想離職",
+  "笑著好聚好散，下一秒被捅一刀",
+  "辦公室小團體，搞得像甄嬛傳",
+  "什麼叫「認真的員工就該晚點走」",
+  "意見總被輕視，受夠了辦公室政治"
+];
+
+const SEED_BUBBLES = [];
+
+let state = {
+  escapeCode: '',
+  height: '',
+  zodiac: '',
+  role: '',
+  region: '',
+  stampedCells: new Set(),
+  bingoCounts: new Array(9).fill(0),
+  confessions: [],
+  titleClicks: 0,
+  titleTimer: null
+};
+
+// ══════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ══════════════════════════════════════════════
+function goToStep(step) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const map = {
+    0: 'screen-intro',
+    1: 'screen-step1',
+    2: 'screen-step2',
+    2.5: 'screen-verdict',
+    3: 'screen-step3',
+    4: 'screen-step4'
+  };
+  const el = document.getElementById(map[step]);
+  if (el) {
+    el.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  if (step === 3) {
+    document.getElementById('letter-code-display').textContent = '逃生代號：' + (state.escapeCode || '匿名社畜');
+  }
+  if (step === 4) initWall();
+}
+
+// ══════════════════════════════════════════════
+// STEP 1: IDENTITY
+// ══════════════════════════════════════════════
+function submitIdentity() {
+  const h = document.getElementById('inp-height').value.trim();
+  const z = document.getElementById('inp-zodiac').value;
+  const r = document.getElementById('inp-role').value.trim();
+  const g = document.getElementById('inp-region').value;
+
+  if (!z || !g) {
+    alert('請至少選擇星座和地區！');
+    return;
+  }
+
+  state.height = h || '???cm';
+  state.zodiac = z;
+  state.role = r || '社畜';
+  state.region = g;
+  state.escapeCode = `${state.height}cm ${state.zodiac} ${state.region} ${state.role}`;
+
+  document.getElementById('escape-code-display').textContent = state.escapeCode;
+  document.getElementById('code-preview').classList.add('show');
+
+  setTimeout(() => goToStep(2), 600);
+}
+
+// ══════════════════════════════════════════════
+// STEP 2: BINGO
+// ══════════════════════════════════════════════
+function buildBingo() {
+  const grid = document.getElementById('bingo-grid');
+  grid.innerHTML = '';
+
+  BINGO_LABELS.forEach((label, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'bingo-cell' + (i === 4 ? ' center' : '');
+    cell.dataset.index = i;
+
+    if (i === 4) {
+      // editable center cell
+      cell.innerHTML = `
+        <div class="center-input-wrap" id="center-input-wrap">
+          <textarea id="center-text" maxlength="20" placeholder="輸入你最想蓋章的一件事…" rows="3"></textarea>
+          <button class="center-confirm-btn" id="center-confirm-btn">✔ 蓋章</button>
+        </div>
+        <div class="stamp">
+          <svg class="stamp-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#cc0000" stroke-width="4"/>
+            <circle cx="50" cy="50" r="40" fill="rgba(180,0,0,0.18)" stroke="#cc0000" stroke-width="2"/>
+            <text x="50" y="42" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="16" font-weight="900" fill="#cc0000">中</text>
+            <text x="50" y="62" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="16" font-weight="900" fill="#cc0000">獎</text>
+          </svg>
+        </div>
+      `;
+
+      // stop cell click from firing when interacting with textarea/button
+      const ta = cell.querySelector('#center-text');
+      const btn = cell.querySelector('#center-confirm-btn');
+
+      ta.addEventListener('click', e => e.stopPropagation());
+      ta.addEventListener('focus', () => cell.classList.add('center-editing'));
+      ta.addEventListener('blur', () => cell.classList.remove('center-editing'));
+
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const val = ta.value.trim();
+        if (!val) { ta.focus(); return; }
+        // update the stored label for dashboard
+        BINGO_LABELS[4] = val;
+        stampCenterCell(cell);
+      });
+
+      // also allow pressing Enter to confirm (Shift+Enter = newline)
+      ta.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          btn.click();
+        }
+      });
+
+    } else {
+      cell.innerHTML = `
+        <span>${label}</span>
+        <div class="stamp">
+          <svg class="stamp-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#cc0000" stroke-width="4"/>
+            <circle cx="50" cy="50" r="40" fill="rgba(180,0,0,0.18)" stroke="#cc0000" stroke-width="2"/>
+            <text x="50" y="42" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="16" font-weight="900" fill="#cc0000">中</text>
+            <text x="50" y="62" text-anchor="middle" font-family="'Noto Sans TC',sans-serif" font-size="16" font-weight="900" fill="#cc0000">獎</text>
+          </svg>
+        </div>
+      `;
+      cell.addEventListener('click', () => toggleStamp(cell, i));
+    }
+
+    grid.appendChild(cell);
+  });
+}
+
+function stampCenterCell(cell) {
+  if (state.stampedCells.has(4)) return;
+
+  // hide input, show text
+  const wrap = cell.querySelector('#center-input-wrap');
+  const val = cell.querySelector('#center-text').value.trim();
+
+  wrap.style.display = 'none';
+
+  // insert a text label so it's visible beneath stamp
+  const label = document.createElement('span');
+  label.textContent = val;
+  label.style.cssText = 'font-size:clamp(0.55rem,2vw,0.7rem);font-weight:700;color:var(--accent);text-align:center;padding:0.3rem;line-height:1.3;position:relative;z-index:1;';
+  cell.insertBefore(label, cell.querySelector('.stamp'));
+
+  toggleStamp(cell, 4);
+}
+
+function toggleStamp(cell, index) {
+  if (state.stampedCells.has(index)) return;
+
+  state.stampedCells.add(index);
+  state.bingoCounts[index]++;
+  cell.classList.add('stamped');
+
+  // sync to Google Sheets (non-blocking)
+  sheetWriteBingo(index);
+
+  // vibration
+  if (navigator.vibrate) navigator.vibrate([40, 20, 40]);
+
+  const count = state.stampedCells.size;
+  document.getElementById('stamp-count').textContent = count;
+
+  if (count === 9) {
+    document.getElementById('bingo-complete').classList.add('show');
+    triggerBingoFlash();
+  }
+}
+
+function triggerBingoFlash() {
+  const flash = document.createElement('div');
+  flash.className = 'bingo-line-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 700);
+}
+
+// ══════════════════════════════════════════════
+// STEP 3: LETTER
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildBingo();
+  setupTitleClicks();
+  initStars();
+
+  const ta = document.getElementById('boss-message');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      document.getElementById('char-num').textContent = ta.value.length;
+    });
+  }
+});
+
+// ══════════════════════════════════════════════
+// GOOGLE SHEETS CONFIG — 貼上你的 Apps Script URL
+// ══════════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx51H7i4E-lUjvAIHJ5Fg_8h3AGI-RXOTwn9RUsAxUBgXQFbvCtUeCXsvcDeidm2RiSQQ/exec';
+
+// ── 寫入一筆留言到 Sheets ──
+async function sheetWrite(msg, code) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'write', text: msg, code: code, time: new Date().toISOString() })
+    });
+  } catch(e) { console.warn('Sheet write failed', e); }
+}
+
+async function sheetWriteBingo(index) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'bingo', index: index, label: BINGO_LABELS[index] })
+    });
+  } catch(e) { console.warn('Bingo write failed', e); }
+}
+
+async function sheetRead() {
+  if (!GAS_URL) return [];
+  try {
+    const res = await fetch(GAS_URL + '?action=read');
+    const data = await res.json();
+    return Array.isArray(data) ? data.map(r => r.text).filter(Boolean) : [];
+  } catch(e) { console.warn('Sheet read failed', e); return []; }
+}
+
+async function sheetReadBingo() {
+  if (!GAS_URL) return null;
+  try {
+    const res = await fetch(GAS_URL + '?action=readBingo');
+    return await res.json();
+  } catch(e) { console.warn('Bingo read failed', e); return null; }
+}
+
+// ══════════════════════════════════════════════
+// STEP 3: SUBMIT LETTER
+// ══════════════════════════════════════════════
+async function submitLetter() {
+  const btn = document.querySelector('#screen-step3 .btn-primary');
+  const msg = document.getElementById('boss-message').value.trim();
+  const code = state.escapeCode || '匿名社畜';
+
+  document.getElementById('letter-code-display').textContent = '逃生代號：' + code;
+
+  // store locally
+  if (msg) {
+    state.confessions.unshift({ text: msg, code, time: new Date().toLocaleTimeString('zh-TW') });
+    if (state.confessions.length > 50) state.confessions.pop();
+  }
+
+  // send to Sheets (non-blocking)
+  if (msg && GAS_URL) {
+    if (btn) { btn.textContent = '送出中...'; btn.disabled = true; }
+    await sheetWrite(msg, code);
+    if (btn) { btn.textContent = '提交申請書 🚀'; btn.disabled = false; }
+  }
+
+  goToStep(4);
+
+  if (msg) {
+    const preview = document.getElementById('submitted-preview');
+    preview.textContent = '✦ 你的心聲已送出，正在與所有社畜一起漂浮...';
+    preview.style.display = 'block';
+    setTimeout(() => preview.style.display = 'none', 4000);
+  }
+}
+
+// ══════════════════════════════════════════════
+// STEP 4: FLOATING WALL
+// ══════════════════════════════════════════════
+let wallInterval = null;
+let allBubbles = [];
+
+async function initWall() {
+  const area = document.getElementById('floating-area');
+  area.innerHTML = '';
+
+  // start with seeds + local confessions immediately
+  allBubbles = [...SEED_BUBBLES];
+  state.confessions.forEach(c => allBubbles.push(c.text));
+  launchBubbles(area);
+
+  // then fetch Sheets data and merge in (non-blocking)
+  if (GAS_URL) {
+    const remote = await sheetRead();
+    if (remote.length > 0) {
+      // dedupe against what we already have
+      const existing = new Set(allBubbles);
+      remote.forEach(t => { if (!existing.has(t)) allBubbles.push(t); });
+    }
+  }
+}
+
+function launchBubbles(area) {
+  if (wallInterval) clearInterval(wallInterval);
+
+  let i = 0;
+  function spawnBubble() {
+    if (allBubbles.length === 0) return;
+    const text = allBubbles[i % allBubbles.length];
+    i++;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+
+    const leftPct = 5 + Math.random() * 80;
+    const dur = 14 + Math.random() * 10;
+    const delay = Math.random() * 2;
+    const drift = (Math.random() - 0.5) * 60;
+
+    bubble.style.left = leftPct + '%';
+    bubble.style.setProperty('--dur', dur + 's');
+    bubble.style.setProperty('--delay', delay + 's');
+    bubble.style.setProperty('--drift', drift + 'px');
+    bubble.textContent = text;
+
+    area.appendChild(bubble);
+    setTimeout(() => bubble.remove(), (dur + delay + 0.5) * 1000);
+  }
+
+  // 根據留言數量動態調整間隔：越少筆間隔越長
+  function getInterval() {
+    const count = allBubbles.length;
+    if (count === 0) return 99999;
+    if (count === 1) return 18000;
+    if (count <= 3) return 10000;
+    if (count <= 6) return 6000;
+    return 2200;
+  }
+
+  // 初始放幾顆，數量少就少放
+  const initCount = Math.min(allBubbles.length, 3);
+  for (let k = 0; k < initCount; k++) {
+    setTimeout(spawnBubble, k * 1200);
+  }
+
+  // 動態間隔循環
+  function scheduleNext() {
+    wallInterval = setTimeout(() => {
+      spawnBubble();
+      scheduleNext();
+    }, getInterval());
+  }
+  setTimeout(scheduleNext, initCount * 1200 + 500);
+}
+
+// ══════════════════════════════════════════════
+// STARS BACKGROUND
+// ══════════════════════════════════════════════
+function initStars() {
+  const canvas = document.getElementById('stars-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawStars(ctx);
+  }
+
+  function drawStars(ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // gradient bg
+    const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+    grad.addColorStop(0, '#0a0a1a');
+    grad.addColorStop(1, '#000510');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // stars
+    for (let i = 0; i < 200; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const r = Math.random() * 1.5;
+      const a = 0.2 + Math.random() * 0.7;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.fill();
+    }
+
+    // occasional red star
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,80,60,${0.3 + Math.random()*0.5})`;
+      ctx.fill();
+    }
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+}
+
+// ══════════════════════════════════════════════
+// SHARE GAME
+// ══════════════════════════════════════════════
+async function shareGame() {
+  const btn = document.getElementById('share-btn-text');
+  const url = window.location.href;
+  const shareText = '我剛做了「2026 社畜集體逃亡計畫」，鑑定結果超準！來玩看看你是哪種社畜 👇';
+
+  // 優先用原生分享（手機）
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: '2026 社畜集體逃亡計畫', text: shareText, url });
+      return;
+    } catch(e) {}
+  }
+
+  // 降級：複製連結
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '✅ 連結已複製！快傳給朋友';
+    setTimeout(() => { btn.textContent = '🔗 複製遊戲連結，揪朋友一起爆氣'; }, 3000);
+  } catch(e) {
+    // 最後降級：prompt
+    prompt('複製這個連結分享給朋友：', url);
+  }
+}
+const VERDICT_DATA = [
+  null, // index 0 unused
+  // 1-3
+  { rank: '職場邊緣人', rankClass: 'rank-low', comment: '雖然偶爾爆氣，但你還有救。建議下班多喝珍奶，勉強再戰。', scorePct: 28, stampColor: '#7ec8e3', stampText: '小傷' },
+  { rank: '職場邊緣人', rankClass: 'rank-low', comment: '雖然偶爾爆氣，但你還有救。建議下班多喝珍奶，勉強再戰。', scorePct: 40, stampColor: '#7ec8e3', stampText: '小傷' },
+  { rank: '職場邊緣人', rankClass: 'rank-low', comment: '雖然偶爾爆氣，但你還有救。建議下班多喝珍奶，勉強再戰。', scorePct: 50, stampColor: '#7ec8e3', stampText: '小傷' },
+  // 4-6
+  { rank: '資深耐操狂', rankClass: 'rank-mid', comment: '你是公司眼中的神隊友，但其實你只是在燃燒智商。逃亡計畫已為你啟動。', scorePct: 62, stampColor: '#ff8c00', stampText: '中傷' },
+  { rank: '資深耐操狂', rankClass: 'rank-mid', comment: '你是公司眼中的神隊友，但其實你只是在燃燒智商。逃亡計畫已為你啟動。', scorePct: 72, stampColor: '#ff8c00', stampText: '中傷' },
+  { rank: '資深耐操狂', rankClass: 'rank-mid', comment: '你是公司眼中的神隊友，但其實你只是在燃燒智商。逃亡計畫已為你啟動。', scorePct: 80, stampColor: '#ff8c00', stampText: '中傷' },
+  // 7-9
+  { rank: '醫學奇蹟', rankClass: 'rank-high', comment: '你還活著簡直是奇蹟，老闆上輩子救了銀河系才遇到你。請立即執行逃亡！', scorePct: 88, stampColor: '#ff3c3c', stampText: '重傷' },
+  { rank: '醫學奇蹟', rankClass: 'rank-high', comment: '你還活著簡直是奇蹟，老闆上輩子救了銀河系才遇到你。請立即執行逃亡！', scorePct: 95, stampColor: '#ff3c3c', stampText: '重傷' },
+  { rank: '醫學奇蹟', rankClass: 'rank-high', comment: '你還活著簡直是奇蹟，老闆上輩子救了銀河系才遇到你。請立即執行逃亡！', scorePct: 100, stampColor: '#ff3c3c', stampText: '重傷' },
+];
+
+function goToVerdict() {
+  // switch screen
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-verdict').classList.add('active');
+  window.scrollTo(0, 0);
+
+  // reset to loading state
+  const loading = document.getElementById('verdict-loading');
+  const result = document.getElementById('verdict-result');
+  loading.style.display = 'flex';
+  result.classList.remove('show');
+
+  // rebuild loading bar (re-trigger animation)
+  const bar = loading.querySelector('.verdict-loading-bar');
+  bar.innerHTML = '';
+  void bar.offsetWidth; // reflow
+  bar.innerHTML = '';
+  // re-apply ::after by toggling class
+  bar.style.display = 'none';
+  void bar.offsetWidth;
+  bar.style.display = '';
+
+  // after fake analysis delay, show result
+  setTimeout(() => {
+    loading.style.display = 'none';
+    renderVerdict();
+    result.classList.add('show');
+    spawnParticles();
+  }, 1200);
+}
+
+function renderVerdict() {
+  const count = state.stampedCells.size;
+  const idx = Math.max(1, Math.min(9, count));
+  const data = VERDICT_DATA[idx];
+
+  // stamp ring SVG
+  const svgEl = document.getElementById('verdict-stamp-svg');
+  svgEl.innerHTML = `
+    <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="80" cy="80" r="74" fill="none" stroke="${data.stampColor}" stroke-width="5" stroke-dasharray="6 4"/>
+      <circle cx="80" cy="80" r="62" fill="rgba(0,0,0,0.5)" stroke="${data.stampColor}" stroke-width="2.5"/>
+      <circle cx="80" cy="80" r="56" fill="none" stroke="${data.stampColor}" stroke-width="1" opacity="0.4"/>
+      <text x="80" y="70" text-anchor="middle" font-family="'Bebas Neue','Noto Sans TC',sans-serif"
+        font-size="22" fill="${data.stampColor}" letter-spacing="2">${data.stampText}</text>
+      <text x="80" y="96" text-anchor="middle" font-family="'Space Mono',monospace"
+        font-size="11" fill="${data.stampColor}" opacity="0.7">DAMAGE LEVEL</text>
+      <text x="80" y="118" text-anchor="middle" font-family="'Space Mono',monospace"
+        font-size="28" fill="${data.stampColor}" font-weight="700">${count}/9</text>
+    </svg>`;
+
+  // rank text
+  const rankEl = document.getElementById('verdict-rank-text');
+  rankEl.textContent = `【${data.rank}】`;
+  rankEl.className = 'verdict-rank ' + data.rankClass;
+
+  // score bar
+  const fill = document.getElementById('verdict-score-fill');
+  fill.style.background = data.stampColor;
+  fill.style.width = '0%';
+  setTimeout(() => { fill.style.width = data.scorePct + '%'; }, 100);
+  document.getElementById('verdict-score-num').textContent = data.scorePct + '%';
+
+  // comment
+  document.getElementById('verdict-comment-text').textContent = data.comment;
+
+  // stamp count
+  document.getElementById('verdict-stamped-num').textContent = count;
+}
+
+function downloadVerdictImage() {
+  const btn = document.getElementById('btn-download');
+  btn.textContent = '⏳ 生成中...';
+  btn.disabled = true;
+
+  const count = state.stampedCells.size;
+  const idx = Math.max(1, Math.min(9, count));
+  const data = VERDICT_DATA[idx];
+
+  // 9:16 IG 限動尺寸
+  const W = 720, H = 1280;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // ── 背景 ──
+  const bgGrad = ctx.createRadialGradient(W/2, H*0.3, 0, W/2, H*0.3, W*0.9);
+  bgGrad.addColorStop(0, '#1a0000');
+  bgGrad.addColorStop(1, '#0a0a0f');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // 格線紋路
+  ctx.strokeStyle = 'rgba(255,60,60,0.06)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 48) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 48) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // ── 頂部標題 ──
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(0, 0, W, 90);
+  ctx.fillStyle = '#ff3c3c';
+  ctx.font = 'bold 22px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('2026 社畜集體逃亡計畫', W/2, 38);
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '16px "Space Mono", monospace';
+  ctx.fillText('職場損耗鑑定報告', W/2, 68);
+
+  // ── 大圓鑑定章 ──
+  const cx = W/2, cy = 480, r = 200;
+  ctx.strokeStyle = data.stampColor;
+  ctx.lineWidth = 6;
+
+  // 外圈虛線
+  ctx.setLineDash([10, 7]);
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 內圈填色
+  ctx.beginPath(); ctx.arc(cx, cy, r - 20, 0, Math.PI*2);
+  const innerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r-20);
+  innerGrad.addColorStop(0, 'rgba(0,0,0,0.6)');
+  innerGrad.addColorStop(1, `${data.stampColor}22`);
+  ctx.fillStyle = innerGrad;
+  ctx.fill();
+  ctx.strokeStyle = data.stampColor;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // 損耗文字
+  ctx.fillStyle = data.stampColor;
+  ctx.font = 'bold 52px "Noto Sans TC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(data.stampText, cx, cy - 30);
+
+  ctx.fillStyle = `${data.stampColor}99`;
+  ctx.font = '18px "Space Mono", monospace';
+  ctx.fillText('DAMAGE LEVEL', cx, cy + 10);
+
+  ctx.fillStyle = data.stampColor;
+  ctx.font = 'bold 64px "Space Mono", monospace';
+  ctx.fillText(`${count}/9`, cx, cy + 70);
+
+  // 發光效果
+  ctx.shadowColor = data.stampColor;
+  ctx.shadowBlur = 40;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.strokeStyle = `${data.stampColor}44`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // ── 等級標題 ──
+  const rankY = 740;
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  roundRect(ctx, 60, rankY - 40, W - 120, 90, 0);
+  ctx.fill();
+
+  ctx.fillStyle = data.stampColor;
+  ctx.font = 'bold 48px "Noto Sans TC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = data.stampColor;
+  ctx.shadowBlur = 20;
+  ctx.fillText(`【${data.rank}】`, W/2, rankY + 20);
+  ctx.shadowBlur = 0;
+
+  // ── 評語 ──
+  ctx.fillStyle = 'rgba(255,60,60,0.12)';
+  ctx.fillRect(60, 860, W - 120, 4);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = '26px "Noto Sans TC", sans-serif';
+  ctx.textAlign = 'center';
+  wrapText(ctx, data.comment, W/2, 920, W - 160, 40);
+
+  // ── 逃生代號 ──
+  const codeY = 1080;
+  ctx.fillStyle = 'rgba(255,215,0,0.08)';
+  ctx.fillRect(60, codeY - 30, W - 120, 60);
+  ctx.strokeStyle = 'rgba(255,215,0,0.3)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(60, codeY - 30, W - 120, 60);
+
+  ctx.fillStyle = '#ffd700';
+  ctx.font = 'bold 22px "Space Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(state.escapeCode || '匿名社畜', W/2, codeY + 10);
+
+  // ── 底部 IG ──
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillRect(0, H - 80, W, 80);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px "Noto Sans TC", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('@ccxaxr._.10  ·  Becca 的社畜收容所', W/2, H - 42);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '16px "Space Mono", monospace';
+  ctx.fillText('ig: ccxaxr._.10', W/2, H - 18);
+
+  // ── 下載 ──
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.download = `社畜鑑定_${data.rank}_${count}格.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = '📸 下載鑑定結果圖';
+    btn.disabled = false;
+  }, 100);
+}
+
+// 換行輔助
+function wrapText(ctx, text, x, y, maxWidth, lineH) {
+  const chars = text.split('');
+  let line = '';
+  let cy = y;
+  for (let i = 0; i < chars.length; i++) {
+    const test = line + chars[i];
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line, x, cy);
+      line = chars[i];
+      cy += lineH;
+    } else {
+      line = test;
+    }
+  }
+  if (line) ctx.fillText(line, x, cy);
+}
+
+// 圓角矩形輔助
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+
+function spawnParticles() {
+  const colors = ['#ff3c3c', '#ff8c00', '#ffd700', '#fff'];
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  for (let i = 0; i < 24; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (i / 24) * Math.PI * 2;
+    const dist = 80 + Math.random() * 120;
+    const size = 4 + Math.random() * 8;
+    const dur = 0.6 + Math.random() * 0.5;
+    p.style.cssText = `
+      left:${cx}px; top:${cy}px;
+      width:${size}px; height:${size}px;
+      background:${colors[i % colors.length]};
+      --px:${Math.cos(angle)*dist}px;
+      --py:${Math.sin(angle)*dist}px;
+      --pt:${dur}s;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000 + 100);
+  }
+}
+
+// ══════════════════════════════════════════════
+// LETTER CODE DISPLAY UPDATE
+// ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// HIDDEN DASHBOARD (5 clicks on h1)
+// ══════════════════════════════════════════════
+function setupTitleClicks() {
+  const title = document.getElementById('title-trigger');
+  title.addEventListener('click', () => {
+    state.titleClicks++;
+    clearTimeout(state.titleTimer);
+    state.titleTimer = setTimeout(() => { state.titleClicks = 0; }, 2000);
+
+    // flash title
+    title.style.color = state.titleClicks % 2 === 0 ? '#fff' : '#ff3c3c';
+
+    if (state.titleClicks >= 5) {
+      state.titleClicks = 0;
+      openDashboard();
+    }
+  });
+}
+
+function openDashboard() {
+  const dash = document.getElementById('screen-dashboard');
+  dash.classList.add('visible');
+  renderDashboard();
+}
+
+function closeDashboard() {
+  document.getElementById('screen-dashboard').classList.remove('visible');
+}
+
+async function renderDashboard() {
+  // bingo stats — 先顯示本機，同時撈雲端
+  const statsEl = document.getElementById('db-bingo-stats');
+
+  function renderBingo(counts) {
+    statsEl.innerHTML = BINGO_LABELS.map((label, i) => `
+      <div class="bingo-stat-cell">
+        <div class="count">${counts[i] || 0}</div>
+        <div class="label">${label.substring(0,12)}...</div>
+      </div>
+    `).join('');
+  }
+
+  renderBingo(state.bingoCounts);
+
+  if (GAS_URL) {
+    const remote = await sheetReadBingo();
+    if (remote && Array.isArray(remote)) {
+      // 合併本機 + 雲端
+      const merged = state.bingoCounts.map((local, i) => local + (remote[i] || 0));
+      renderBingo(merged);
+    }
+  }
+
+  // confessions — 先顯示本機，同時從雲端撈
+  const confEl = document.getElementById('db-confessions');
+
+  function renderList(items) {
+    if (items.length === 0) {
+      confEl.innerHTML = '<div class="confession-item" style="opacity:0.4">// 尚無真心話提交</div>';
+    } else {
+      confEl.innerHTML = items.map(c => `
+        <div class="confession-item">
+          ${c.text}
+          <div class="meta">// ${c.code || '匿名社畜'} · ${c.time || ''}</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  renderList(state.confessions);
+
+  if (GAS_URL) {
+    confEl.insertAdjacentHTML('afterbegin', '<div class="confession-item" style="opacity:0.4;font-size:0.6rem" id="db-loading">// 載入雲端資料中...</div>');
+    try {
+      const res = await fetch(GAS_URL + '?action=read');
+      const remote = await res.json();
+      document.getElementById('db-loading')?.remove();
+      if (Array.isArray(remote) && remote.length > 0) {
+        const merged = [...remote, ...state.confessions];
+        renderList(merged);
+        confEl.insertAdjacentHTML('afterbegin', `
+          <div style="font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--neon);margin-bottom:0.8rem;opacity:0.7">
+            // 雲端共 ${remote.length} 筆 · 本機 ${state.confessions.length} 筆
+          </div>
+        `);
+      }
+    } catch(e) {
+      document.getElementById('db-loading')?.remove();
+      confEl.insertAdjacentHTML('afterbegin', '<div class="confession-item" style="opacity:0.3;font-size:0.6rem">// 雲端載入失敗，僅顯示本機資料</div>');
+    }
+  }
+}
+</script>
+
+<!-- ── 返回傳送門按鈕 ── -->
+<style>
+  .portal-return {
+    position: fixed;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem 1.1rem;
+    border-radius: 999px;
+    background: rgba(10,10,15,.82);
+    border: 1px solid rgba(212,163,115,.22);
+    color: rgba(212,163,115,.55);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: .65rem;
+    letter-spacing: .10em;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: color .2s, border-color .2s, background .2s, transform .25s;
+    white-space: nowrap;
+  }
+  .portal-return:hover {
+    color: rgba(232,194,138,.95);
+    border-color: rgba(212,163,115,.55);
+    background: rgba(20,12,35,.92);
+    transform: translateX(-50%) translateY(-2px);
+  }
+  .portal-return svg {
+    width: 11px; height: 11px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+</style>
+<a href="biolink.html" class="portal-return">
+  <svg viewBox="0 0 24 24"><polyline points="19 12 5 12"/><polyline points="12 5 5 12 12 19"/></svg>
+  ✦ 回到 Becca 的傳送門
+</a>
+
+</body>
+</html>

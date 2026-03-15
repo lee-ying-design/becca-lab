@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>戀愛腦午夜特設門診</title>
+<!-- GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-N2XSKR52EZ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-N2XSKR52EZ');</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+:root {
+  --deep: #0a0412;
+  --purple: #2d1547;
+  --rose: #c4537a;
+  --pink: #f472a8;
+  --gold: #d4a843;
+  --cream: #fdf6ec;
+  --pale: #fff0f7;
+  --neon-pink: #ff3d8b;
+  --neon-gold: #ffc94d;
+  --glass: rgba(255,255,255,0.06);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--deep);
+  font-family: 'Noto Sans TC', sans-serif;
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ========== BACKGROUND ECG ANIMATION ========== */
+.ecg-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.ecg-line {
+  position: absolute;
+  width: 200%;
+  height: 2px;
+  opacity: 0.12;
+}
+.ecg-line:nth-child(1) { top: 20%; animation: ecg-scroll 8s linear infinite; }
+.ecg-line:nth-child(2) { top: 45%; animation: ecg-scroll 12s linear infinite reverse; }
+.ecg-line:nth-child(3) { top: 70%; animation: ecg-scroll 10s linear infinite; }
+.ecg-line:nth-child(4) { top: 88%; animation: ecg-scroll 14s linear infinite reverse; }
+
+@keyframes ecg-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ========== PARTICLES ========== */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float-up linear infinite;
+  opacity: 0;
+}
+@keyframes float-up {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.2; }
+  100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+}
+
+/* ========== MAIN CONTAINER ========== */
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ========== SCREEN MANAGEMENT ========== */
+.screen {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  animation: fadeIn 0.6s ease;
+}
+.screen.active { display: flex; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== LANDING SCREEN ========== */
+#landing {
+  background: radial-gradient(ellipse at 30% 20%, rgba(196,83,122,0.25) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, rgba(45,21,71,0.8) 0%, transparent 60%);
+  text-align: center;
+  gap: 2rem;
+}
+
+.clinic-badge {
+  background: rgba(212,168,67,0.15);
+  border: 1px solid rgba(212,168,67,0.4);
+  border-radius: 2rem;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.main-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff 0%, #f8c8e0 40%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(244,114,168,0.5));
+}
+
+.subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  color: rgba(255,255,255,0.6);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+/* ========== NURSE CHARACTER SVG ========== */
+/* ========== IV DRIP PROGRESS BAR ========== */
+.iv-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.iv-label {
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.iv-wrapper {
+  position: relative;
+  width: 60px;
+  height: 100px;
+}
+.iv-bottle {
+  width: 100%;
+  height: 100%;
+}
+.iv-fluid {
+  transition: height 0.8s cubic-bezier(0.34,1.56,0.64,1), y 0.8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.iv-tube {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(244,114,168,0.6), rgba(244,114,168,0.1));
+}
+.iv-drip {
+  position: absolute;
+  bottom: -38px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 8px;
+  background: var(--pink);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: drip 1.5s ease-in infinite;
+  opacity: 0;
+}
+@keyframes drip {
+  0% { transform: translateX(-50%) scaleY(0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateX(-50%) translateY(15px) scaleY(1.5); opacity: 0; }
+}
+
+/* ========== QUESTION CARD ========== */
+.question-card {
+  background: linear-gradient(135deg, rgba(45,21,71,0.9) 0%, rgba(20,8,35,0.95) 100%);
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  max-width: 640px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 60px rgba(196,83,122,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.question-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--pink), var(--gold), transparent);
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ECG in card background */
+.card-ecg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.q-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.q-number {
+  background: linear-gradient(135deg, var(--rose), var(--pink));
+  color: white;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 2rem;
+  letter-spacing: 0.1em;
+}
+
+.q-category {
+  color: var(--gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+
+.q-text {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: white;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+/* ========== OPTION BUTTONS ========== */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.option-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.option-letter {
+  background: rgba(212,168,67,0.2);
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid rgba(212,168,67,0.3);
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.option-btn:hover {
+  transform: scale(0.98);
+  border-color: rgba(244,114,168,0.5);
+  background: rgba(244,114,168,0.08);
+  box-shadow: 0 0 20px rgba(244,114,168,0.15);
+}
+
+.option-btn:active {
+  transform: scale(0.96);
+}
+
+.option-btn.selected {
+  border-color: var(--pink);
+  background: rgba(244,114,168,0.15);
+  color: white;
+}
+
+/* Gold ripple effect */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.6) 0%, transparent 70%);
+  transform: scale(0);
+  animation: ripple-out 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple-out {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ========== MAIN BUTTON ========== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--rose) 0%, var(--pink) 50%, #ff6eb5 100%);
+  color: white;
+  border: none;
+  border-radius: 3rem;
+  padding: 1rem 2.5rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 30px rgba(196,83,122,0.4), 0 0 0 0 rgba(244,114,168,0);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(196,83,122,0.6), 0 0 30px rgba(244,114,168,0.3);
+}
+
+.btn-primary:active {
+  transform: scale(0.96) translateY(0);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(212,168,67,0.4);
+  border-radius: 3rem;
+  padding: 0.75rem 2rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+.btn-secondary:hover {
+  background: rgba(212,168,67,0.1);
+  border-color: var(--gold);
+  transform: scale(0.98);
+}
+
+/* ========== LOADING SCREEN ========== */
+#loading {
+  background: #000;
+  gap: 2rem;
+  text-align: center;
+}
+
+.loading-text {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.2rem;
+  color: var(--pink);
+  min-height: 2rem;
+  opacity: 0;
+  animation: text-appear 0.5s ease forwards;
+}
+@keyframes text-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.heartbeat-line {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: draw-heart 2s ease infinite;
+}
+@keyframes draw-heart {
+  0% { stroke-dashoffset: 300; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -300; }
+}
+
+.loading-bar-container {
+  width: 300px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rose), var(--pink), var(--gold));
+  border-radius: 2px;
+  animation: loading-progress 5s linear forwards;
+}
+@keyframes loading-progress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* ========== PRESCRIPTION RESULT ========== */
+#result {
+  background: radial-gradient(ellipse at 50% 0%, rgba(196,83,122,0.3) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 100%, rgba(45,21,71,0.6) 0%, transparent 50%);
+  gap: 2rem;
+  padding: 3rem 1rem;
+}
+
+.prescription-wrap {
+  position: relative;
+  max-width: 580px;
+  width: 100%;
+}
+
+.prescription {
+  background: #fdf8f0;
+  color: #2a1a0e;
+  border-radius: 0.5rem;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Torn edge effect */
+.prescription::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: 0; right: 0; height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 8px,
+    #fdf8f0 8px, #fdf8f0 12px,
+    transparent 12px, transparent 20px,
+    #fdf8f0 20px, #fdf8f0 24px
+  );
+}
+.prescription::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0; height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 6px,
+    #fdf8f0 6px, #fdf8f0 14px,
+    transparent 14px, transparent 22px,
+    #fdf8f0 22px, #fdf8f0 28px
+  );
+}
+
+.rx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+}
+
+.rx-clinic-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #8b1a3a;
+}
+
+.rx-clinic-sub {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 0.2rem;
+}
+
+.rx-stamp {
+  text-align: center;
+  position: relative;
+}
+
+.stamp {
+  display: inline-block;
+  border: 3px solid #cc0000;
+  border-radius: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  color: #cc0000;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 1.3rem;
+  transform: rotate(-8deg);
+  opacity: 0.85;
+  box-shadow: inset 0 0 0 1px rgba(204,0,0,0.3);
+  letter-spacing: 0.1em;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 2px,
+    rgba(204,0,0,0.03) 2px,
+    rgba(204,0,0,0.03) 4px
+  );
+}
+
+.rx-patient-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.rx-field {
+  display: flex;
+  gap: 0.3rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 0.3rem;
+}
+
+.rx-field-label { color: #999; }
+.rx-field-value { font-weight: 500; color: #333; }
+
+.rx-diagnosis-label {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #8b1a3a;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.1em;
+}
+
+.rx-diagnosis {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a0a0a;
+  background: rgba(139,26,58,0.07);
+  border-left: 3px solid #8b1a3a;
+  padding: 0.75rem 1rem;
+  border-radius: 0 0.3rem 0.3rem 0;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.rx-prescription-label {
+  font-size: 0.75rem;
+  color: #999;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.rx-content {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #2a1a0e;
+  white-space: pre-line;
+  border: 1px dashed rgba(0,0,0,0.15);
+  padding: 1rem;
+  border-radius: 0.3rem;
+  background: rgba(255,255,255,0.5);
+  margin-bottom: 1.5rem;
+}
+
+.rx-score {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.score-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #8b1a3a;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.3rem;
+}
+
+.rx-footer {
+  font-size: 0.7rem;
+  color: #aaa;
+  text-align: right;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.rx-cta {
+  text-align: center;
+  background: linear-gradient(135deg, #8b1a3a, #c4537a);
+  color: white;
+  padding: 1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.9rem;
+}
+
+/* ========== CORNER INFO BTN ========== */
+.info-corner {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 100;
+}
+
+.info-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(212,168,67,0.2);
+  border: 1px solid rgba(212,168,67,0.5);
+  color: var(--gold);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+}
+.info-btn:hover {
+  background: rgba(212,168,67,0.3);
+  transform: scale(1.1);
+}
+
+.info-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 55px;
+  right: 0;
+  width: 280px;
+  background: rgba(20,8,35,0.97);
+  border: 1px solid rgba(212,168,67,0.4);
+  border-radius: 1rem;
+  padding: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.info-tooltip.show { display: block; }
+.info-tooltip strong { color: var(--gold); }
+
+/* ========== HEADER MINI ========== */
+.mini-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.mini-header h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.1em;
+}
+
+/* ========== RESULT ACTIONS ========== */
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.btn-becca {
+  background: linear-gradient(135deg, #8b1a3a 0%, var(--rose) 50%, var(--pink) 100%);
+  color: white;
+  border: none;
+  border-radius: 3rem;
+  padding: 1.1rem 2.5rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 30px rgba(139,26,58,0.5);
+  width: 100%;
+  text-align: center;
+}
+
+.btn-becca:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 50px rgba(139,26,58,0.7);
+}
+
+.case-section {
+  max-width: 580px;
+  width: 100%;
+  background: rgba(212,168,67,0.05);
+  border: 1px solid rgba(212,168,67,0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.case-section h3 {
+  font-family: 'Noto Serif TC', serif;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.case-section p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+
+/* ========== QUESTION SCREEN LAYOUT ========== */
+#quiz {
+  gap: 1.5rem;
+  padding: 2rem 1rem 6rem;
+}
+
+/* ========== SCORE BAR IN QUESTION ========== */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 640px;
+  width: 100%;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  white-space: nowrap;
+}
+
+/* ========== INTRO CARDS ========== */
+.intro-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.intro-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1rem;
+  padding: 1rem 1.2rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  flex: 1;
+  min-width: 140px;
+}
+
+.intro-card-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.intro-card-label { color: var(--gold); font-size: 0.7rem; letter-spacing: 0.1em; }
+
+/* ========== SHARE BUTTONS ========== */
+.share-row {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.btn-share-dl, .btn-share-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem;
+  border-radius: 3rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-share-dl {
+  background: linear-gradient(135deg, #7b4fa0, #9b6bc0);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 20px rgba(123,79,160,0.4);
+}
+.btn-share-dl:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(123,79,160,0.6);
+}
+.btn-share-dl:active { transform: scale(0.96); }
+
+.btn-share-link {
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid rgba(212,168,67,0.5);
+}
+.btn-share-link:hover {
+  background: rgba(212,168,67,0.1);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.btn-share-link:active { transform: scale(0.96); }
+
+.share-icon { font-size: 1rem; }
+
+.copy-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20,8,35,0.97);
+  border: 1px solid rgba(212,168,67,0.4);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 3rem;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== RESULT ANIMATIONS ========== */
+
+/* 動畫層容器 */
+#result-anim-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+/* 🚑 救護車 */
+.ambulance-wrap {
+  position: absolute;
+  bottom: 18%;
+  left: -220px;
+  animation: drive-across 2.6s cubic-bezier(0.4,0,0.6,1) forwards;
+}
+@keyframes drive-across {
+  0%   { left: -220px; }
+  100% { left: 110%; }
+}
+.ambulance-svg { width: 180px; }
+
+/* 輪胎痕 */
+.tire-track {
+  position: absolute;
+  bottom: 17%;
+  left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 18px, transparent 18px, transparent 32px);
+  animation: track-appear 0.5s 1.2s ease forwards;
+  opacity: 0;
+}
+@keyframes track-appear { to { opacity: 1; } }
+
+/* 警示燈閃爍overlay */
+.siren-flash {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 40, 40, 0.12);
+  animation: siren-blink 0.3s 4 alternate;
+  pointer-events: none;
+}
+@keyframes siren-blink {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 🚁 直升機（彩蛋極限暈船） */
+.helicopter-wrap {
+  position: absolute;
+  top: 8%;
+  right: -160px;
+  animation: fly-in 3s ease forwards;
+}
+@keyframes fly-in {
+  0%   { right: -160px; top: 8%; }
+  40%  { right: 42%; top: 6%; }
+  60%  { right: 42%; top: 10%; }
+  100% { right: 110%; top: 4%; }
+}
+.helicopter-svg { width: 130px; }
+.rotor {
+  transform-origin: 50px 14px;
+  animation: spin-rotor 0.15s linear infinite;
+}
+@keyframes spin-rotor { to { transform: rotate(360deg); } }
+
+/* 💔 心臟跳動破碎 */
+.heart-anim-wrap {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5rem;
+  animation: heart-beat-break 3s ease forwards;
+  filter: drop-shadow(0 0 20px rgba(244,114,168,0.8));
+}
+@keyframes heart-beat-break {
+  0%   { transform: translateX(-50%) scale(0); opacity: 0; }
+  20%  { transform: translateX(-50%) scale(1.3); opacity: 1; }
+  40%  { transform: translateX(-50%) scale(0.9); }
+  55%  { transform: translateX(-50%) scale(1.2); }
+  70%  { transform: translateX(-50%) scale(1) rotate(-5deg); }
+  85%  { transform: translateX(-50%) scale(1.1) rotate(5deg); opacity: 1; }
+  100% { transform: translateX(-50%) scale(0) rotate(20deg); opacity: 0; }
+}
+
+/* 💔 心臟裂開左半 */
+.heart-left {
+  position: absolute;
+  top: 12%; left: 50%;
+  font-size: 5rem;
+  opacity: 0;
+  animation: heart-split-left 1.2s 2s ease forwards;
+  filter: drop-shadow(0 0 15px rgba(244,114,168,0.6));
+}
+.heart-right {
+  position: absolute;
+  top: 12%; left: 50%;
+  font-size: 5rem;
+  opacity: 0;
+  animation: heart-split-right 1.2s 2s ease forwards;
+  filter: drop-shadow(0 0 15px rgba(244,114,168,0.6));
+}
+@keyframes heart-split-left {
+  0%   { opacity: 1; transform: translateX(-55%) rotate(0deg); }
+  100% { opacity: 0; transform: translateX(-130%) rotate(-30deg) translateY(60px); }
+}
+@keyframes heart-split-right {
+  0%   { opacity: 1; transform: translateX(-45%) rotate(0deg); }
+  100% { opacity: 0; transform: translateX(30%) rotate(30deg) translateY(60px); }
+}
+
+/* 🌸 花朵飄走 */
+.flower-wrap {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  font-size: 2.8rem;
+  animation: flower-grow-fly 3.5s ease forwards;
+}
+@keyframes flower-grow-fly {
+  0%   { transform: scale(0) translateY(0); opacity: 0; }
+  30%  { transform: scale(1) translateY(0); opacity: 1; }
+  60%  { transform: scale(1) translateY(-20px); opacity: 1; }
+  100% { transform: scale(0.4) translateX(300px) translateY(-120px) rotate(40deg); opacity: 0; }
+}
+.wind-lines {
+  position: absolute;
+  bottom: 22%; left: 8%;
+  opacity: 0;
+  animation: wind-show 1s 1.8s ease forwards;
+  font-size: 1.5rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.3em;
+}
+@keyframes wind-show {
+  0%   { opacity: 0; transform: translateX(0); }
+  50%  { opacity: 0.7; transform: translateX(30px); }
+  100% { opacity: 0; transform: translateX(80px); }
+}
+
+/* 🎊 撒花 */
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+/* 出院證明飛入 */
+.discharge-paper {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fdf8f0;
+  border: 2px solid #1a7a3a;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  color: #1a7a3a;
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  white-space: nowrap;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  animation: paper-fly-in 1s 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  opacity: 0;
+}
+@keyframes paper-fly-in {
+  0%   { top: -80px; opacity: 0; }
+  100% { top: 15%; opacity: 1; }
+}
+
+/* ========== MOBILE FIXES ========== */
+
+/* 全域觸控優化 */
+* { -webkit-tap-highlight-color: transparent; }
+button { touch-action: manipulation; }
+
+/* 手機版 screen padding */
+@media (max-width: 480px) {
+
+  /* Landing */
+  #landing {
+    padding: 2.5rem 1.2rem 2rem;
+    gap: 1.4rem;
+    justify-content: center;
+  }
+
+  .main-title {
+    font-size: clamp(1.7rem, 9vw, 2.8rem);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .intro-cards {
+    gap: 0.6rem;
+  }
+
+  .intro-card {
+    min-width: 120px;
+    padding: 0.8rem;
+    font-size: 0.78rem;
+  }
+
+  /* Quiz screen */
+  #quiz {
+    padding: 1.2rem 0.8rem 5rem;
+    gap: 1rem;
+  }
+
+  .progress-row {
+    gap: 0.8rem;
+  }
+
+  .question-card {
+    padding: 1.3rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .q-text {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .option-btn {
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .options {
+    gap: 0.6rem;
+  }
+
+  /* Loading */
+  .loading-bar-container {
+    width: calc(100vw - 3rem);
+    max-width: 300px;
+  }
+
+  /* Result */
+  #result {
+    padding: 1.5rem 0.8rem 4rem;
+    gap: 1.2rem;
+  }
+
+  .prescription {
+    padding: 1.5rem 1.1rem;
+  }
+
+  .rx-patient-info {
+    grid-template-columns: 1fr;
+  }
+
+  .score-number {
+    font-size: 2.8rem;
+  }
+
+  .rx-content {
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+
+  .rx-diagnosis {
+    font-size: 0.9rem;
+  }
+
+  .stamp {
+    font-size: 1rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  /* Result actions */
+  .result-actions {
+    max-width: 100%;
+    padding: 0 0.2rem;
+  }
+
+  .btn-becca {
+    font-size: 0.92rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .share-row {
+    max-width: 100%;
+  }
+
+  .btn-share-dl, .btn-share-link {
+    font-size: 0.82rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Copy toast — 手機不要超出邊界 */
+  .copy-toast {
+    width: calc(100vw - 3rem);
+    text-align: center;
+    white-space: normal;
+    font-size: 0.8rem;
+  }
+
+  /* Info corner tooltip 往左展開 */
+  .info-tooltip {
+    right: 0;
+    left: auto;
+    width: calc(100vw - 4rem);
+    max-width: 280px;
+  }
+
+  /* IV drip 縮小一點 */
+  .iv-wrapper {
+    width: 46px;
+    height: 80px;
+  }
+
+  /* 動畫尺寸縮小 */
+  .ambulance-svg { width: 130px; }
+  .helicopter-svg { width: 100px; }
+  .heart-anim-wrap { font-size: 3.5rem; }
+  .heart-left, .heart-right { font-size: 3.5rem; }
+  .flower-wrap { font-size: 2rem; }
+  .discharge-paper { font-size: 0.85rem; padding: 0.6rem 1rem; }
+}
+
+/* 中型手機 / 小平板 */
+@media (max-width: 640px) {
+  .prescription-wrap { padding: 0 0.2rem; }
+
+  .btn-primary {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* 讓 mini header 不要太佔空間 */
+  .mini-header { margin-bottom: 0.4rem; }
+}
+
+/* 確保超寬螢幕也正常 */
+@media (min-width: 768px) {
+  .question-card { padding: 2rem 2.2rem; }
+  .prescription { padding: 2.5rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Result animation layer -->
+<div id="result-anim-layer"></div>
+
+<!-- ECG Background -->
+<div class="ecg-bg">
+  <!-- ECG lines as SVG -->
+  <svg class="ecg-line" viewBox="0 0 1200 20" preserveAspectRatio="none" style="top:20%">
+    <polyline points="0,10 80,10 100,2 120,18 140,2 160,18 175,10 260,10 280,2 300,18 320,2 340,18 355,10 440,10 460,2 480,18 500,2 520,18 535,10 620,10 640,2 660,18 680,2 700,18 715,10 800,10 820,2 840,18 860,2 880,18 895,10 980,10 1000,2 1020,18 1040,2 1060,18 1075,10 1160,10 1180,2 1200,18 1220,2 1240,18 1255,10 1340,10 1360,2 1380,18 1400,2 1420,18 1435,10 1520,10 1540,2 1560,18 1580,2 1600,18 1615,10 1700,10 1720,2 1740,18 1760,2 1780,18 1795,10 1880,10 1900,2 1920,18 1940,2 1960,18 1975,10 2060,10 2080,2 2100,18 2120,2 2140,18 2155,10 2200,10" fill="none" stroke="#f472a8" stroke-width="1.5"/>
+  </svg>
+  <svg class="ecg-line" viewBox="0 0 1200 20" preserveAspectRatio="none" style="top:45%">
+    <polyline points="0,10 90,10 110,2 130,18 150,2 170,18 185,10 270,10 290,2 310,18 330,2 350,18 365,10 450,10 470,2 490,18 510,2 530,18 545,10 630,10 650,2 670,18 690,2 710,18 725,10 810,10 830,2 850,18 870,2 890,18 905,10 990,10 1010,2 1030,18 1050,2 1070,18 1085,10 1170,10 1190,2 1210,18 1230,2 1250,18 1265,10 1350,10 1370,2 1390,18 1410,2 1430,18 1445,10 1530,10 1550,2 1570,18 1590,2 1610,18 1625,10 1710,10 1730,2 1750,18 1770,2 1790,18 1805,10 1890,10 1910,2 1930,18 1950,2 1970,18 1985,10 2070,10 2090,2 2110,18 2130,2 2150,18 2165,10 2200,10" fill="none" stroke="#d4a843" stroke-width="1.5"/>
+  </svg>
+  <svg class="ecg-line" viewBox="0 0 1200 20" preserveAspectRatio="none" style="top:70%">
+    <polyline points="0,10 70,10 90,2 110,18 130,2 150,18 165,10 250,10 270,2 290,18 310,2 330,18 345,10 430,10 450,2 470,18 490,2 510,18 525,10 610,10 630,2 650,18 670,2 690,18 705,10 790,10 810,2 830,18 850,2 870,18 885,10 970,10 990,2 1010,18 1030,2 1050,18 1065,10 1150,10 1170,2 1190,18 1210,2 1230,18 1245,10 1330,10 1350,2 1370,18 1390,2 1410,18 1425,10 1510,10 1530,2 1550,18 1570,2 1590,18 1605,10 1690,10 1710,2 1730,18 1750,2 1770,18 1785,10 1870,10 1890,2 1910,18 1930,2 1950,18 1965,10 2050,10 2070,2 2090,18 2110,2 2130,18 2145,10 2200,10" fill="none" stroke="#f472a8" stroke-width="1"/>
+  </svg>
+</div>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div id="app">
+
+  <!-- ========== LANDING ========== -->
+  <div class="screen active" id="landing">
+    <div class="clinic-badge">🏥 午夜特設門診 · MIDNIGHT CLINIC</div>
+
+
+    <div>
+      <div class="main-title">戀愛腦午夜特設門診</div>
+      <div class="subtitle">— Midnight Love-Brain Diagnosis Clinic —</div>
+    </div>
+
+    <div class="intro-cards">
+      <div class="intro-card">
+        <div class="intro-card-icon">📋</div>
+        <div class="intro-card-label">五題診斷測驗</div>
+        <div>精準識別您的暈船指數</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">🧪</div>
+        <div class="intro-card-label">化驗分析</div>
+        <div>AI 護士長親自主刀</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-card-icon">📜</div>
+        <div class="intro-card-label">毒舌處方箋</div>
+        <div>不說謊、只說實話</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="startQuiz();gtag('event','btn_click',{event_category:'lovebrain',event_label:'開始看診',value:10});" style="font-size:1.1rem; padding:1.1rem 3rem;">
+      🩺 立即掛號就診
+    </button>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.3);">本門診收費：一個清醒的靈魂</div>
+  </div>
+
+  <!-- ========== QUIZ SCREEN ========== -->
+  <div class="screen" id="quiz">
+    <div class="mini-header">
+      <h2>🩺 戀愛腦午夜特設門診</h2>
+    </div>
+
+    <div class="progress-row">
+      <!-- IV drip bottle -->
+      <div class="iv-container">
+        <div class="iv-label">點滴</div>
+        <div class="iv-wrapper">
+          <svg class="iv-bottle" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Bottle outline -->
+            <path d="M20 8 L18 20 Q10 25 10 38 L10 82 Q10 88 20 88 L40 88 Q50 88 50 82 L50 38 Q50 25 42 20 L40 8 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            <!-- Neck -->
+            <rect x="24" y="2" width="12" height="10" rx="4" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+            <!-- Cap -->
+            <rect x="22" y="0" width="16" height="4" rx="2" fill="rgba(212,168,67,0.6)"/>
+            <!-- Fluid level -->
+            <clipPath id="bottleClip">
+              <path d="M20 8 L18 20 Q10 25 10 38 L10 82 Q10 88 20 88 L40 88 Q50 88 50 82 L50 38 Q50 25 42 20 L40 8 Z"/>
+            </clipPath>
+            <rect id="ivFluid" x="10" y="30" width="40" height="60" fill="url(#ivGrad)" clip-path="url(#bottleClip)" style="transition: y 0.8s ease, height 0.8s ease"/>
+            <!-- Bottle shine -->
+            <path d="M16 25 Q15 45 16 65" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="ivGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff80c0"/>
+                <stop offset="100%" stop-color="#c4537a"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="iv-tube"></div>
+          <div class="iv-drip" id="ivDrip"></div>
+        </div>
+        <div class="iv-label" id="ivPercent">0%</div>
+      </div>
+
+      <div style="flex:1">
+        <div class="progress-text" id="progressText">第 1 題 / 共 5 題</div>
+        <div style="height:6px; background:rgba(255,255,255,0.08); border-radius:3px; margin-top:0.5rem; overflow:hidden;">
+          <div id="progressBar" style="height:100%; background:linear-gradient(90deg,#c4537a,#f472a8,#d4a843); border-radius:3px; width:0%; transition:width 0.5s ease;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <!-- ECG background in card -->
+      <svg class="card-ecg" viewBox="0 0 500 200" preserveAspectRatio="none">
+        <polyline points="0,100 50,100 70,60 90,140 110,60 130,140 150,100 200,100 220,60 240,140 260,60 280,140 300,100 350,100 370,60 390,140 410,60 430,140 450,100 500,100" fill="none" stroke="#f472a8" stroke-width="2"/>
+      </svg>
+
+      <div class="q-header">
+        <span class="q-number" id="qNumber">第 01 題</span>
+        <span class="q-category" id="qCategory">掛號諮詢</span>
+      </div>
+
+      <div class="q-text" id="qText">Loading...</div>
+
+      <div class="options" id="optionsContainer"></div>
+    </div>
+  </div>
+
+  <!-- ========== LOADING SCREEN ========== -->
+  <div class="screen" id="loading">
+    <svg class="loading-icon" viewBox="0 0 80 80">
+      <polyline class="heartbeat-line" points="0,40 15,40 22,20 30,60 38,20 46,60 54,40 65,40 72,30 80,50" fill="none" stroke="#f472a8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="loading-text" id="loadingText">正在檢測您腦中的積水量...</div>
+    <div class="loading-bar-container">
+      <div class="loading-bar-fill" id="loadingBar"></div>
+    </div>
+    <div style="font-size:0.75rem; color:rgba(255,255,255,0.2); margin-top:1rem;">請勿逃離診療室</div>
+  </div>
+
+  <!-- ========== RESULT SCREEN ========== -->
+  <div class="screen" id="result">
+    <div class="mini-header">
+      <h2>📋 診斷報告書</h2>
+    </div>
+
+    <div class="prescription-wrap">
+      <div class="prescription">
+        <div class="rx-header">
+          <div>
+            <div class="rx-clinic-name">🏥 戀愛腦午夜特設門診</div>
+            <div class="rx-clinic-sub">MIDNIGHT LOVE-BRAIN DIAGNOSIS CLINIC · AI NURSE PRESIDING</div>
+          </div>
+          <div class="rx-stamp">
+            <div class="stamp" id="stampText">沒救了</div>
+          </div>
+        </div>
+
+        <div class="rx-patient-info">
+          <div class="rx-field">
+            <span class="rx-field-label">就診日期：</span>
+            <span class="rx-field-value" id="rxDate">-</span>
+          </div>
+          <div class="rx-field">
+            <span class="rx-field-label">診斷編號：</span>
+            <span class="rx-field-value" id="rxId">-</span>
+          </div>
+          <div class="rx-field" style="grid-column: 1/-1">
+            <span class="rx-field-label">主治護士長：</span>
+            <span class="rx-field-value">Becca 護士長</span>
+          </div>
+        </div>
+
+        <div class="rx-score">
+          <div class="score-number" id="rxScore">0</div>
+          <div class="score-label">戀愛腦指數 / 100</div>
+        </div>
+
+        <div class="rx-diagnosis-label">【 臨床診斷 】</div>
+        <div class="rx-diagnosis" id="rxDiagnosis">-</div>
+
+        <div class="rx-prescription-label">Rp. 處方箋</div>
+        <div class="rx-content" id="rxContent">-</div>
+
+        <div class="rx-footer">
+          感情沒救，但事業可以有救。· 本診斷書具法律... 呃，情緒效力
+          <br>Becca's Clinic · AI Nurse Dept. · 午夜門診
+        </div>
+
+        <div class="rx-cta">
+          感情沒救，但事業可以有救。🧠
+        </div>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <!-- Clinic mini icon -->
+      <div style="display:flex; gap:1rem; align-items:center; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:1rem; padding:1rem 1.2rem; width:100%; box-sizing:border-box;">
+        <div style="font-size:2.8rem; line-height:1; flex-shrink:0;">🩺</div>
+        <div style="font-size:0.85rem; color:rgba(255,255,255,0.7); line-height:1.6; font-style:italic;">
+          「診療完畢。你的情況我已充分掌握。現在，讓我告訴你一件更重要的事——」
+        </div>
+      </div>
+
+      <button class="btn-becca" onclick="/* TODO: 換成你的個人傳送門網址，例如: window.location.href='https://yoursite.com' */">
+        ✦ 進入 Becca 的專業診療空間
+      </button>
+
+      <div class="case-section" id="caseSection">
+        <h3>🏆 沉浸式設計邏輯解析</h3>
+        <p>此測驗流程展示沉浸式設計的核心邏輯——透過情緒共鳴、角色代入與幽默互動，捕捉用戶的行為標籤與心理數據。</p>
+        <p style="margin-top:0.75rem">從掛號到診斷，每一個選擇都是一次用戶畫像的累積。這就是品牌如何在娛樂中建立連結，在笑聲中留下印記。</p>
+      </div>
+
+      <button class="btn-secondary" onclick="restartQuiz();gtag('event','btn_click',{event_category:'lovebrain',event_label:'重新就診',value:3})">🔄 重新就診</button>
+
+      <!-- 分享區 -->
+      <div class="share-row">
+        <button class="btn-share-dl" id="btnDownload" onclick="downloadResult();gtag('event','btn_click',{event_category:'lovebrain',event_label:'下載診斷書',value:8})">
+          <span class="share-icon">📥</span> 下載診斷書
+        </button>
+        <button class="btn-share-link" id="btnCopyLink" onclick="copyGameLink();gtag('event','btn_click',{event_category:'lovebrain',event_label:'複製連結分享',value:8})">
+          <span class="share-icon">🔗</span> 複製遊戲連結
+        </button>
+      </div>
+      <div id="copyToast" class="copy-toast">✅ 連結已複製！快傳給朋友確認他們有沒有救</div>
+    </div>
+  </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Corner info button -->
+<div class="info-corner">
+  <div class="info-tooltip" id="infoTooltip">
+    💡 <strong>設計拆解</strong><br><br>
+    此沉浸式流程展示如何透過情緒共鳴捕捉用戶標籤與行為數據。<br><br>
+    角色設定 × 情境問卷 × 毒舌診斷 = 病毒式傳播公式 ✨
+  </div>
+  <button class="info-btn" onclick="toggleInfo()">💡</button>
+</div>
+
+<script>
+// ========== PARTICLES ==========
+(function createParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#f472a8','#d4a843','#c4537a','#e8a0c8','#ffd4ea'];
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 8 + 3;
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random()*100}%;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration: ${Math.random()*15+10}s;
+      animation-delay: ${Math.random()*10}s;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+// ========== QUESTIONS DATA ==========
+const questions = [
+  {
+    number: '01',
+    category: '掛號諮詢',
+    text: '深夜 11 點你發出了訊息，對方隔天中午才回你一個貼圖。你的反應是？',
+    options: [
+      { letter: 'A', text: '他在忙，沒關係，貼圖也是一種回應。', points: 5 },
+      { letter: 'B', text: '我是不是說錯話了？還是哪裡讓他不舒服？開始反覆看自己發的訊息。', points: 15 },
+      { letter: 'C', text: '翻遍他所有社群，統計他這幾小時按了哪些讚、看了什麼限動、幾點上線。', points: 30 },
+      { letter: 'D', text: '晚上發訊息本來就不一定即時，隔天有回就好，時間不對而已，不需要過度解讀。', points: 0 },
+    ]
+  },
+  {
+    number: '02',
+    category: '過敏原測試',
+    text: '你看到他點讚了某個正妹/帥哥的限動。你的第一直覺是？',
+    options: [
+      { letter: 'A', text: '純欣賞而已，誰都有眼睛。', points: 5 },
+      { letter: 'B', text: '想問他為什麼點讚，但一直糾結要不要問，最後沒問，但悶了整整三天。', points: 20 },
+      { letter: 'C', text: '立刻開始肉搜對方帳號、翻歷史貼文、比較外貌，最後整個情緒崩潰。', points: 30 },
+      { letter: 'D', text: '點讚是很日常的行為，如果這段關係有信任基礎，一個讚不足以動搖什麼。', points: 0 },
+    ]
+  },
+  {
+    number: '03',
+    category: '心律監測',
+    text: '約會前，你會花多少時間研究他的星座、人類圖或過去情史？',
+    options: [
+      { letter: 'A', text: '完全不看，人對了感覺就對了。', points: 0 },
+      { letter: 'B', text: '做出完整的交叉對比，包含星盤、血型、MBTI 相容性，並整理成 Excel 表。', points: 20 },
+      { letter: 'C', text: '連他國小得過什麼獎都知道，前女友 IG 已經偷追好幾個月了。', points: 30 },
+      { letter: 'D', text: '參考一下個性傾向無妨，但實際相處才是判斷依據，資料只是輔助。', points: 0 },
+    ]
+  },
+  {
+    number: '04',
+    category: '臨床反應',
+    text: '他突然冷淡了幾天，一反常態不太回訊息。你採取的行動是？',
+    options: [
+      { letter: 'A', text: '我也冷淡，各自有各自的生活，等他準備好再說。', points: 5 },
+      { letter: 'B', text: '瘋狂發心碎廢文、曬孤獨照、改大頭貼，等他來關心你。', points: 20 },
+      { letter: 'C', text: '一直傳訊息問他在幹嘛、還好嗎、我說錯什麼了嗎，平均每兩小時一則。', points: 30 },
+      { letter: 'D', text: '給對方一些空間，幾天後直接問「最近還好嗎？」，簡單確認，不放大也不消失。', points: 0 },
+    ]
+  },
+  {
+    number: '05',
+    category: '深度檢查',
+    text: '如果這段感情是一個產品，你覺得你是？',
+    options: [
+      { letter: 'A', text: '執行長。我有主導權，決策清晰，有備案。', points: 0 },
+      { letter: 'B', text: '免費用戶。功能受限，還得仰賴對方心情好才有人陪。', points: 15 },
+      { letter: 'C', text: '一整年都沒人修的 Bug。存在感明明在，但沒有人想處理你。', points: 30 },
+      { letter: 'D', text: '共同開發者。兩個人都在貢獻，也都在調整，版本會持續迭代。', points: 0 },
+    ]
+  }
+];
+
+// =====================================================
+// 🔧 設定區：把你的 Apps Script 網址貼在這裡
+// =====================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLD46eYf4_fAYZ3X_1i-LNWq82hfj78lfkvDlGnhKljf4xiTyPVMBohxGMSQBb1vqc/exec';
+// =====================================================
+
+let currentQ = 0;
+let totalScore = 0;
+let answers = [];
+let answerLetters = [];
+let currentRecordId = null;
+
+// 送資料到 Google Sheet（靜默，不影響遊戲體驗）
+function trackEvent(payload) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('貼上')) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}); // 靜默失敗，不影響遊戲
+}
+
+// ========== IV DRIP ==========
+function updateIV(progress) {
+  // progress: 0 to 1
+  // Bottle: y from 30, height 60 = full. We drain from top.
+  const fluidEl = document.getElementById('ivFluid');
+  const percentEl = document.getElementById('ivPercent');
+  const fluidHeight = 58 * (1 - progress);
+  const fluidY = 30 + 58 * progress;
+  fluidEl.setAttribute('y', fluidY);
+  fluidEl.setAttribute('height', Math.max(0, fluidHeight));
+  percentEl.textContent = Math.round(progress * 100) + '%';
+}
+
+// ========== START QUIZ ==========
+function startQuiz() {
+  currentQ = 0;
+  totalScore = 0;
+  answers = [];
+  answerLetters = [];
+  showScreen('quiz');
+  renderQuestion();
+  updateIV(0);
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('qNumber').textContent = `第 ${q.number} 題`;
+  document.getElementById('qCategory').textContent = q.category;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('progressText').textContent = `第 ${currentQ+1} 題 / 共 5 題`;
+  document.getElementById('progressBar').style.width = `${(currentQ/5)*100}%`;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${opt.letter}</span><span>${opt.text}</span>`;
+    btn.onclick = (e) => selectOption(btn, opt.points, opt.letter, e);
+    // Animate in
+    btn.style.opacity = '0';
+    btn.style.transform = 'translateY(15px)';
+    setTimeout(() => {
+      btn.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      btn.style.opacity = '1';
+      btn.style.transform = 'translateY(0)';
+    }, idx * 80);
+    container.appendChild(btn);
+  });
+}
+
+function createRipple(btn, e) {
+  const rect = btn.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.cssText = `width:${rect.width}px; height:${rect.width}px; left:${x - rect.width/2}px; top:${y - rect.width/2}px;`;
+  btn.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 700);
+}
+
+function selectOption(btn, points, letter, e) {
+  createRipple(btn, e);
+  btn.classList.add('selected');
+  document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+
+  totalScore += points;
+  answers.push(points);
+  answerLetters.push(letter);
+
+  setTimeout(() => {
+    currentQ++;
+    if (currentQ < questions.length) {
+      updateIV(currentQ / questions.length);
+      // Fade out card
+      const card = document.querySelector('.question-card');
+      card.style.transition = 'opacity 0.3s, transform 0.3s';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+        renderQuestion();
+      }, 300);
+    } else {
+      updateIV(1);
+      showLoadingScreen();
+    }
+  }, 700);
+}
+
+// ========== LOADING SCREEN ==========
+const loadingMessages = [
+  '正在檢測您腦中的積水量...',
+  '偵測到嚴重自我催眠行為...',
+  '理智線修復失敗，強制斷裂中...',
+  '暈船指數超標，啟動緊急通報...',
+  '護士長正在撰寫病歷中...',
+];
+
+function showLoadingScreen() {
+  showScreen('loading');
+  let msgIdx = 0;
+  const textEl = document.getElementById('loadingText');
+
+  // Reset loading bar
+  const bar = document.getElementById('loadingBar');
+  bar.style.animation = 'none';
+  bar.offsetHeight; // reflow
+  bar.style.animation = 'loading-progress 5s linear forwards';
+
+  function nextMessage() {
+    if (msgIdx >= loadingMessages.length) return;
+    textEl.style.animation = 'none';
+    textEl.offsetHeight;
+    textEl.style.animation = 'text-appear 0.5s ease forwards';
+    textEl.textContent = loadingMessages[msgIdx];
+    msgIdx++;
+    if (msgIdx < loadingMessages.length) {
+      setTimeout(nextMessage, 1000);
+    }
+  }
+  nextMessage();
+
+  setTimeout(() => {
+    showResultScreen();
+  }, 5200);
+}
+
+// ========== RESULT ==========
+function showResultScreen() {
+  showScreen('result');
+
+  // Date & ID
+  const now = new Date();
+  document.getElementById('rxDate').textContent = now.toLocaleDateString('zh-TW');
+  document.getElementById('rxId').textContent = 'LB-' + Math.random().toString(36).substr(2,6).toUpperCase();
+
+  // Animate score
+  let displayScore = 0;
+  const targetScore = Math.min(totalScore, 100);
+  const scoreEl = document.getElementById('rxScore');
+  const interval = setInterval(() => {
+    displayScore = Math.min(displayScore + 3, targetScore);
+    scoreEl.textContent = displayScore;
+    if (displayScore >= targetScore) clearInterval(interval);
+  }, 40);
+
+  // Diagnosis
+  let stamp, diagnosisTitle, content;
+
+  if (totalScore >= 80) {
+    stamp = '沒救了';
+    diagnosisTitle = '【 急性多巴胺過度自補症合併現實感喪失 】';
+    content = `你給我站住！人家回你一個貼圖，一個！貼！圖！你就已經在那邊選婚紗、排桌次、想說要生幾個小孩名字叫什麼——我的老天鵝啊！你腦袋裡面裝的是什麼東西！是漿糊嗎！是棉花嗎！
+
+你知道嗎，人家傳那個貼圖的時候，手指頭按下去總共花了零點三秒。零點三秒！你為這零點三秒謀劃了一整個人生！
+
+我行醫這麼多年，頭一次看到有人把「對方敷衍我」解讀成「他只是不善表達」！你不是在談戀愛，你是一個人在家裡自導自演八點檔，還入戲入到出不來！醒來好嗎！`;
+  } else if (totalScore >= 50) {
+    stamp = '觀察中';
+    diagnosisTitle = '【 慢性劇情腦補反覆發作伴隨理智短路 】';
+    content = `你給我說清楚！剛才說他對你好，現在說他不在乎你——你是在演哪一齣！你的劇本到底是誰寫的，一下愛得死去活來，一下心如死灰，你當你自己是什麼，遙控器喔，一直轉台！
+
+他三年前發的限動你都翻出來了，你查得比警察局還仔細，你是嫌自己日子過太爽是不是！截圖傳給七個朋友分析，七個人講七種答案，你最後選了最慘的那個版本——我就知道！我就知道你會這樣！
+
+清醒一半暈船一半，你是豆腐嗎，一推就倒！`;
+  } else if (totalScore >= 15) {
+    stamp = '勉強及格';
+    diagnosisTitle = '【 情感神經過度鈣化暨桃花排斥反應 】';
+    content = `你給我過來！對方傳訊息晚了三分鐘，你臉就垮下來了；人家語氣平淡一點，你就在那邊分析他是不是變心了——你是在談戀愛還是在做績效考核啊！KPI設這麼高，你讓對方怎麼活！
+
+清醒是清醒啦，但你清醒得像一塊冰，人家靠近你手都凍僵了還要繼續靠嗎！你這樣下去桃花不是被你冷跑，是被你活活嚇死好嗎！
+
+Becca 護士長奉勸你，偶爾讓自己軟一下，感情不是專案管理，對方不是你的下屬，你也不是他的考官——放！下！來！`;
+  } else {
+    stamp = '恭喜出院';
+    diagnosisTitle = '【 戀愛腦抗體檢測陽性，免疫功能正常 】';
+    content = `恭喜你，你是本門診今年少數幾個可以直接出院的患者。
+
+你知道給對方空間、也給自己空間。不會因為一個貼圖就開始解讀宇宙，也不會因為對方冷淡就發動地毯式偵察。
+
+你了解感情需要信任，不是監控；需要溝通，不是腦補。
+
+Becca 護士長的唯一叮嚀：這種健康的心態很珍貴，請好好保持。遇到值得的人，也可以適時讓自己軟一點——理性是盔甲，但偶爾卸下來才能真正靠近人。`;
+  }
+
+  document.getElementById('stampText').textContent = stamp;
+  document.getElementById('rxDiagnosis').textContent = diagnosisTitle;
+  document.getElementById('rxContent').textContent = content;
+
+  // Stamp color: green for healthy result
+  const stampEl = document.getElementById('stampText');
+  if (totalScore < 15) {
+    stampEl.style.borderColor = '#1a7a3a';
+    stampEl.style.color = '#1a7a3a';
+  } else {
+    stampEl.style.borderColor = '#cc0000';
+    stampEl.style.color = '#cc0000';
+  }
+
+  // Trigger animation after short delay
+  const isAllC = answerLetters.length === 5 && answerLetters.every(l => l === 'C');
+  setTimeout(() => triggerResultAnimation(totalScore, isAllC), 600);
+
+  // 送資料到 Google Sheet
+  currentRecordId = 'REC-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+  trackEvent({
+    action: 'submit',
+    recordId: currentRecordId,
+    score: totalScore,
+    result: stamp,
+    q1: answerLetters[0] || '-',
+    q2: answerLetters[1] || '-',
+    q3: answerLetters[2] || '-',
+    q4: answerLetters[3] || '-',
+    q5: answerLetters[4] || '-',
+  });
+}
+
+// ========== RESULT ANIMATIONS ==========
+function clearAnimLayer() {
+  document.getElementById('result-anim-layer').innerHTML = '';
+}
+
+function playAmbulance(withHelicopter = false) {
+  const layer = document.getElementById('result-anim-layer');
+  clearAnimLayer();
+
+  // Siren flash
+  const flash = document.createElement('div');
+  flash.className = 'siren-flash';
+  layer.appendChild(flash);
+  setTimeout(() => flash.remove(), 1200);
+
+  // Tire track
+  const track = document.createElement('div');
+  track.className = 'tire-track';
+  layer.appendChild(track);
+  setTimeout(() => track.remove(), 4000);
+
+  // Ambulance SVG
+  const wrap = document.createElement('div');
+  wrap.className = 'ambulance-wrap';
+  wrap.innerHTML = `
+    <svg class="ambulance-svg" viewBox="0 0 180 70" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <rect x="10" y="18" width="140" height="38" rx="6" fill="#f0f0f0"/>
+      <rect x="10" y="18" width="140" height="38" rx="6" fill="none" stroke="#ccc" stroke-width="1"/>
+      <!-- Red stripe -->
+      <rect x="10" y="32" width="140" height="10" fill="#e83030" opacity="0.85"/>
+      <!-- Cross -->
+      <rect x="75" y="22" width="18" height="6" rx="2" fill="#e83030"/>
+      <rect x="80" y="18" width="8" height="14" rx="2" fill="#e83030"/>
+      <!-- Cab -->
+      <path d="M130 18 L150 18 Q165 18 168 30 L168 56 L130 56 Z" fill="#ddd"/>
+      <rect x="138" y="22" width="22" height="16" rx="3" fill="#a8d4f0" opacity="0.8"/>
+      <!-- Siren lights -->
+      <rect x="55" y="12" width="16" height="8" rx="3" fill="#3399ff" id="sirenBlue"/>
+      <rect x="75" y="12" width="16" height="8" rx="3" fill="#ff3333" id="sirenRed"/>
+      <!-- Wheels -->
+      <circle cx="42" cy="56" r="12" fill="#333"/>
+      <circle cx="42" cy="56" r="6" fill="#666"/>
+      <circle cx="140" cy="56" r="12" fill="#333"/>
+      <circle cx="140" cy="56" r="6" fill="#666"/>
+      <!-- AMBULANCE text -->
+      <text x="65" y="48" fill="#e83030" font-size="7" font-weight="bold" font-family="sans-serif" letter-spacing="1">AMBULANCE</text>
+      <style>
+        #sirenBlue { animation: siren-b 0.25s infinite alternate; }
+        #sirenRed  { animation: siren-r 0.25s infinite alternate; }
+        @keyframes siren-b { to { fill: #99ccff; } }
+        @keyframes siren-r { to { fill: #ff9999; } }
+      </style>
+    </svg>`;
+  layer.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 3000);
+
+  if (withHelicopter) {
+    setTimeout(() => {
+      const heli = document.createElement('div');
+      heli.className = 'helicopter-wrap';
+      heli.innerHTML = `
+        <svg class="helicopter-svg" viewBox="0 0 130 60" xmlns="http://www.w3.org/2000/svg">
+          <!-- Rotor blade -->
+          <g class="rotor">
+            <rect x="5" y="12" width="90" height="4" rx="2" fill="#e83030"/>
+            <rect x="47" y="0" width="6" height="28" rx="2" fill="#e83030"/>
+          </g>
+          <!-- Body -->
+          <ellipse cx="65" cy="38" rx="38" ry="14" fill="#f0f0f0"/>
+          <rect x="28" y="30" width="74" height="16" rx="8" fill="#e8e8e8"/>
+          <!-- Cockpit -->
+          <ellipse cx="90" cy="36" rx="16" ry="12" fill="#a8d4f0" opacity="0.9"/>
+          <!-- Red cross -->
+          <rect x="52" y="32" width="14" height="5" rx="2" fill="#e83030"/>
+          <rect x="56" y="28" width="6" height="13" rx="2" fill="#e83030"/>
+          <!-- Tail -->
+          <path d="M28 38 L5 42 L5 46 L28 44 Z" fill="#ddd"/>
+          <!-- Tail rotor -->
+          <circle cx="5" cy="44" r="6" fill="none" stroke="#aaa" stroke-width="2"/>
+          <line x1="5" y1="38" x2="5" y2="50" stroke="#999" stroke-width="2"/>
+          <line x1="-1" y1="44" x2="11" y2="44" stroke="#999" stroke-width="2"/>
+          <!-- Skids -->
+          <line x1="45" y1="52" x2="85" y2="52" stroke="#aaa" stroke-width="3" stroke-linecap="round"/>
+          <line x1="50" y1="44" x2="50" y2="52" stroke="#aaa" stroke-width="2"/>
+          <line x1="80" y1="44" x2="80" y2="52" stroke="#aaa" stroke-width="2"/>
+          <!-- Siren -->
+          <rect x="58" y="24" width="8" height="5" rx="2" fill="#ff3333"/>
+        </svg>`;
+      layer.appendChild(heli);
+      setTimeout(() => heli.remove(), 4000);
+    }, 1800);
+  }
+}
+
+function playHeartBreak() {
+  const layer = document.getElementById('result-anim-layer');
+  clearAnimLayer();
+
+  const h = document.createElement('div');
+  h.className = 'heart-anim-wrap';
+  h.textContent = '💗';
+  layer.appendChild(h);
+
+  const hL = document.createElement('div');
+  hL.className = 'heart-left';
+  hL.textContent = '💔';
+  layer.appendChild(hL);
+
+  const hR = document.createElement('div');
+  hR.className = 'heart-right';
+  hR.textContent = '💔';
+  layer.appendChild(hR);
+
+  setTimeout(() => { h.remove(); hL.remove(); hR.remove(); }, 4000);
+}
+
+function playFlowerBlow() {
+  const layer = document.getElementById('result-anim-layer');
+  clearAnimLayer();
+
+  const flower = document.createElement('div');
+  flower.className = 'flower-wrap';
+  flower.textContent = '🌸';
+  layer.appendChild(flower);
+
+  const wind = document.createElement('div');
+  wind.className = 'wind-lines';
+  wind.textContent = '～～～';
+  layer.appendChild(wind);
+
+  setTimeout(() => { flower.remove(); wind.remove(); }, 4500);
+}
+
+function playConfetti() {
+  const layer = document.getElementById('result-anim-layer');
+  clearAnimLayer();
+
+  // Paper
+  const paper = document.createElement('div');
+  paper.className = 'discharge-paper';
+  paper.textContent = '🎉 恭喜出院！理智線完好如初';
+  layer.appendChild(paper);
+
+  // Confetti
+  const colors = ['#f472a8','#d4a843','#7b4fa0','#4ade80','#60a5fa','#f87171','#fbbf24'];
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.cssText = `
+      left: ${Math.random()*100}%;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      width: ${Math.random()*10+5}px;
+      height: ${Math.random()*10+5}px;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      animation-duration: ${Math.random()*2+1.5}s;
+      animation-delay: ${Math.random()*1.5}s;
+    `;
+    layer.appendChild(c);
+  }
+
+  setTimeout(() => clearAnimLayer(), 5000);
+}
+
+function triggerResultAnimation(score, isAllC) {
+  if (isAllC) {
+    playAmbulance(true); // 救護車 + 直升機
+  } else if (score >= 80) {
+    playAmbulance(false);
+  } else if (score >= 50) {
+    playHeartBreak();
+  } else if (score >= 15) {
+    playFlowerBlow();
+  } else {
+    playConfetti();
+  }
+}
+
+function showCase() {
+  const s = document.getElementById('caseSection');
+  s.style.display = s.style.display === 'block' ? 'none' : 'block';
+}
+
+function restartQuiz() {
+  showScreen('landing');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function copyGameLink() {
+  const url = window.location.href.split('?')[0];
+  navigator.clipboard.writeText(url).then(() => {
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  });
+  // 追蹤分享事件
+  if (currentRecordId) trackEvent({ action: 'share', recordId: currentRecordId });
+}
+
+async function downloadResult() {
+  const btn = document.getElementById('btnDownload');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="share-icon">⏳</span> 產生中...';
+  btn.style.pointerEvents = 'none';
+
+  try {
+    const el = document.querySelector('.prescription-wrap');
+
+    const canvas = await html2canvas(el, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#0a0412',
+      logging: false,
+      onclone: (doc) => {
+        const wrap = doc.querySelector('.prescription-wrap');
+        if (wrap) {
+          wrap.style.padding = '24px';
+          wrap.style.background = '#0a0412';
+          wrap.style.borderRadius = '16px';
+        }
+      }
+    });
+
+    const link = document.createElement('a');
+    link.download = '戀愛腦診斷書.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    // 追蹤下載事件
+    if (currentRecordId) trackEvent({ action: 'download', recordId: currentRecordId });
+
+  } catch (e) {
+    console.error(e);
+    alert('下載失敗，請截圖儲存 😢');
+  }
+
+  btn.innerHTML = originalText;
+  btn.style.pointerEvents = 'auto';
+}
+
+function toggleInfo() {
+  document.getElementById('infoTooltip').classList.toggle('show');
+}
+
+// Close tooltip on outside click
+document.addEventListener('click', (e) => {
+  const corner = document.querySelector('.info-corner');
+  if (!corner.contains(e.target)) {
+    document.getElementById('infoTooltip').classList.remove('show');
+  }
+});
+
+// Add gold ripple to primary buttons
+document.querySelectorAll('.btn-primary, .btn-becca').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    createRipple(this, e);
+  });
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- ── 返回傳送門按鈕 ── -->
+<style>
+  .portal-return {
+    position: fixed;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem 1.1rem;
+    border-radius: 999px;
+    background: rgba(10,4,18,.82);
+    border: 1px solid rgba(212,163,115,.22);
+    color: rgba(212,163,115,.55);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: .65rem;
+    letter-spacing: .10em;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: color .2s, border-color .2s, background .2s, transform .25s;
+    white-space: nowrap;
+  }
+  .portal-return:hover {
+    color: rgba(232,194,138,.95);
+    border-color: rgba(212,163,115,.55);
+    background: rgba(20,12,35,.92);
+    transform: translateX(-50%) translateY(-2px);
+  }
+  .portal-return svg {
+    width: 11px; height: 11px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+</style>
+<a href="biolink.html" class="portal-return">
+  <svg viewBox="0 0 24 24"><polyline points="19 12 5 12"/><polyline points="12 5 5 12 12 19"/></svg>
+  ✦ 回到 Becca 的傳送門
+</a>
+
+</body>
+</html>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Becca's AI Playground｜數位實驗紀錄</title>
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-N2XSKR52EZ"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-N2XSKR52EZ');</script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════ */
+    :root {
+      --bg:       #0F0C29;
+      --bg2:      #181536;
+      --bg3:      #201D40;
+      --gold:     #D4A373;
+      --gold-lt:  #E8C28A;
+      --gold-dk:  #9A6A38;
+      --gold-gl:  rgba(212,163,115,0.12);
+      --border:   rgba(212,163,115,0.20);
+      --border-h: rgba(212,163,115,0.55);
+      --glass:    rgba(255,255,255,0.042);
+      --glass-h:  rgba(255,255,255,0.068);
+      --ink:      #EAE6DC;
+      --ink-2:    rgba(234,230,220,0.60);
+      --ink-3:    rgba(234,230,220,0.30);
+      --r:        22px;
+      --gap:      12px;
+      --ff:       'Sora', sans-serif;
+      --fz:       'Noto Sans TC', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { font-size:16px; }
+
+    body {
+      min-height: 100dvh;
+      background: linear-gradient(160deg, var(--bg) 0%, var(--bg3) 100%);
+      font-family: var(--ff);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.4rem 1rem 2.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── CJK Typography — prevents bad breaks ── */
+    * {
+      word-break: keep-all;       /* 中文整詞斷行，不拆字 */
+      overflow-wrap: break-word;  /* 超長英文串才強制斷行 */
+      -webkit-hyphens: none;
+      hyphens: none;
+    }
+    /* English-only nodes can word-wrap normally */
+    .pa-name-en, .pa-role, .b-eyebrow, .chip, .plan-label,
+    .cs-tag, .c-ey, .ab, .pill, footer { word-break: normal; }
+
+    /* ── Grain texture ── */
+    body::after {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+      opacity:0.030;
+    }
+
+    /* ── Background orbs ── */
+    .bg { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .o  { position:absolute; border-radius:50%; filter:blur(100px); }
+    .o1 { width:480px;height:480px; background:radial-gradient(circle,rgba(80,55,180,.28) 0%,transparent 65%); top:-16%;left:-14%; animation:od 22s ease-in-out infinite; }
+    .o2 { width:320px;height:320px; background:radial-gradient(circle,rgba(212,163,115,.14) 0%,transparent 65%); top:45%;right:-10%; animation:od 22s -8s ease-in-out infinite; }
+    .o3 { width:260px;height:260px; background:radial-gradient(circle,rgba(55,40,130,.35) 0%,transparent 65%); bottom:8%;left:8%; animation:od 22s -16s ease-in-out infinite; }
+    @keyframes od {
+      0%,100%{transform:translate(0,0) scale(1)}
+      33%{transform:translate(46px,-36px) scale(1.05)}
+      66%{transform:translate(-28px,50px) scale(.95)}
+    }
+
+    /* ── Stars ── */
+    .stars { position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden; }
+    .star  { position:absolute;border-radius:50%;background:#fff;animation:tw linear infinite; }
+    @keyframes tw { 0%,100%{opacity:.06} 50%{opacity:.42} }
+
+    /* ═══════════════════════════════════════
+       BENTO GRID
+       3-column base: col1=1fr col2=1fr col3=auto
+       B spans col 1-2 (≈60%), C spans col 3
+       For mobile: collapses to 1fr 1fr with B full-width
+    ═══════════════════════════════════════ */
+    .bento {
+      position:relative; z-index:1;
+      width:100%; max-width:500px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;   /* equal halves */
+      gap: var(--gap);
+    }
+
+    /* Row assignments
+       HTML order = visual order: A, W, B, D, CTA
+    */
+    .block-a   { grid-column: 1 / -1; }   /* Row 1: full width  */
+    .block-w   { grid-column: 1 / -1; }   /* Row 2: full width — 作品展示 */
+    .block-b   { grid-column: 1 / 2;  }   /* Row 3: left half   */
+    .block-d   { grid-column: 2 / 3;  }   /* Row 3: right half  */
+    .block-cta { grid-column: 1 / -1; }   /* Row 4: full width  */
+
+    /* ── Base glass card ── */
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: relative; overflow: hidden;
+      box-shadow: 0 2px 24px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+      transition: border-color .3s, box-shadow .3s, transform .3s cubic-bezier(.34,1.56,.64,1), background .3s;
+    }
+    /* subtle top highlight on every card */
+    .card::before {
+      content:''; position:absolute; inset:0; border-radius:var(--r); pointer-events:none;
+      background: linear-gradient(160deg, rgba(255,255,255,.05) 0%, transparent 45%);
+    }
+    .card.btn { cursor:pointer; }
+    .card.btn:hover {
+      border-color: var(--border-h);
+      box-shadow: 0 0 0 1px rgba(212,163,115,.20), 0 0 15px rgba(212,163,115,.30), 0 8px 32px rgba(0,0,0,.55);
+      transform: translateY(-3px) scale(1.005);
+      background: var(--glass-h);
+    }
+    .card.btn:active { transform:scale(.98); transition:transform .1s; }
+
+    /* ── gold gradient text ── */
+    .gtx {
+      background: linear-gradient(110deg, var(--gold-dk) 0%, var(--gold-lt) 45%, var(--gold) 80%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+
+    /* ── eyebrow chip ── */
+    .chip {
+      display:inline-flex; align-items:center;
+      font-size:.56rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+      padding:.2rem .65rem; border-radius:5px;
+      background:rgba(212,163,115,.10); border:1px solid rgba(212,163,115,.22);
+      color:var(--gold); width:fit-content;
+    }
+    .chip.purple { background:rgba(140,110,230,.12); border-color:rgba(140,110,230,.28); color:#B8A8F0; }
+    .chip.teal   { background:rgba(70,170,165,.12);  border-color:rgba(70,170,165,.28);  color:#7DCFCC; }
+
+    /* ── section divider ── */
+    .sep { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:.85rem 0; }
+
+    /* ═══════════════════════════════════════
+       A · HERO PROFILE  (full width, row 1)
+    ═══════════════════════════════════════ */
+    .block-a {
+      padding: 2rem 1.7rem 1.7rem;
+      overflow: visible;
+    }
+
+    /* ── Terminal decoration (::after on card) ── */
+    .block-a::after {
+      content: '> _ prompt: 正在解構行銷邏輯...';
+      position: absolute;
+      bottom: 1.1rem; right: 1.3rem;
+      font-family: 'Courier New', monospace;
+      font-size: .52rem;
+      color: rgba(212,163,115,.18);
+      letter-spacing: .08em;
+      pointer-events: none;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typewriter 2.8s steps(22, end) 1.2s forwards;
+    }
+    @keyframes typewriter {
+      from { width: 0; }
+      to   { width: 22em; }
+    }
+
+    .pa-top { display:flex; align-items:center; gap:1rem; margin-bottom:1.3rem; }
+    .av-ring {
+      width:64px; height:64px; flex-shrink:0; border-radius:50%; padding:2.5px;
+      background:linear-gradient(135deg,var(--gold-dk),var(--gold-lt),var(--gold));
+      box-shadow:0 0 22px rgba(212,163,115,.45);
+    }
+    .av-ring img { width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg2);display:block; }
+
+    .pa-name-zh {
+      font-family:var(--fz); font-size:1.42rem; font-weight:700;
+      letter-spacing:.12em; line-height:1.1;
+    }
+    .pa-name-en {
+      display:block; font-size:.60rem; font-weight:400;
+      letter-spacing:.32em; text-transform:uppercase;
+      color:var(--gold); opacity:.65; margin-top:.25rem;
+    }
+    .pa-role {
+      font-size:.58rem; font-weight:400; letter-spacing:.10em; text-transform:uppercase;
+      color:var(--ink-2); margin-top:.8rem;
+      line-height: 1.8;
+    }
+
+    /* H1 — main headline */
+    .pa-headline {
+      font-size:1.28rem; font-weight:700; line-height:1.6;
+      color:var(--ink); margin-top:.9rem; letter-spacing:.06em;
+      word-break: keep-all;
+    }
+    /* Highlight "套版" with gold gradient */
+    .pa-headline .hl-anti {
+      position: relative; display: inline;
+      background: linear-gradient(110deg, var(--gold-dk), var(--gold-lt));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Body copy */
+    .pa-sub {
+      font-size:.70rem; font-weight:300; color:rgba(234,230,220,.75);
+      line-height:2.1; margin-top:.9rem;
+      letter-spacing:.06em;
+      word-break: keep-all;
+    }
+    /* 「對話」色彩強調，不加粗 */
+    .pa-sub .hl-word {
+      color: rgba(234,230,220,.75);
+      font-weight: 300;
+    }
+
+    /* Separator */
+    .pa-sep {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(212,163,115,.22), transparent);
+      margin: 1.2rem 0 1.1rem;
+    }
+
+    /* Pills — glow breath animation */
+    .pa-pills { display:flex; gap:.6rem; flex-wrap:wrap; }
+
+    @keyframes pill-glow {
+      0%, 100% {
+        box-shadow: 0 0 0px rgba(212,163,115,0),
+                    inset 0 0 0px rgba(212,163,115,0);
+        border-color: rgba(212,163,115,.22);
+      }
+      50% {
+        box-shadow: 0 0 8px rgba(212,163,115,.35),
+                    0 0 2px rgba(212,163,115,.15) inset;
+        border-color: rgba(212,163,115,.55);
+      }
+    }
+    .pill {
+      font-size:.60rem; letter-spacing:.10em; font-weight:500;
+      padding:.32rem .88rem; border-radius:999px;
+      background: rgba(212,163,115,.08);
+      border: 1px solid rgba(212,163,115,.22);
+      color: var(--gold-lt);
+      cursor: default;
+      animation: pill-glow 3s ease-in-out infinite;
+      transition: transform .22s cubic-bezier(.34,1.56,.64,1),
+                  box-shadow .22s ease,
+                  background .22s ease;
+    }
+    .pill:nth-child(2) { animation-delay: .8s; }
+    .pill:nth-child(3) { animation-delay: 1.6s; }
+    .pill:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(212,163,115,.30), 0 0 8px rgba(212,163,115,.20);
+      background: rgba(212,163,115,.16);
+      animation-play-state: paused;
+    }
+
+    /* ═══════════════════════════════════════
+       B · FLAGSHIP  (row 2, left)
+    ═══════════════════════════════════════ */
+    .block-b {
+      padding:1.4rem 1.3rem;
+      display:flex; flex-direction:column;
+      min-height: 230px;
+    }
+    .b-eyebrow {
+      display:flex; align-items:center; gap:.5rem;
+      font-size:.56rem; font-weight:500; letter-spacing:.18em;
+      text-transform:uppercase; color:var(--gold); opacity:.75;
+      margin-bottom:.65rem;
+    }
+    .b-eyebrow::before {
+      content:''; display:inline-block; width:14px; height:1px;
+      background:linear-gradient(90deg,var(--gold),transparent); flex-shrink:0;
+    }
+    .b-title {
+      font-size:1.08rem; font-weight:700; color:var(--ink);
+      line-height:1.6; letter-spacing:.06em;
+      word-break: keep-all;
+    }
+    .b-title .orn { color:var(--gold); margin-right:.22rem; }
+    .b-desc {
+      font-size:.70rem; font-weight:300; color:var(--ink-2);
+      line-height:1.9; letter-spacing:.06em;
+      margin-top:.5rem; flex:1;
+    }
+    .b-desc strong { color:var(--ink); font-weight:500; }
+    /* corner bracket deco */
+    .block-b::after {
+      content:''; position:absolute; top:1rem; right:1rem;
+      width:38px; height:38px; pointer-events:none;
+      border-top:1px solid rgba(212,163,115,.25);
+      border-right:1px solid rgba(212,163,115,.25);
+      border-radius:0 7px 0 0;
+    }
+    .b-btns { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; }
+
+    /* shared action button styles */
+    .ab {
+      display:inline-flex; align-items:center; gap:.32rem;
+      padding:.48rem .9rem; border-radius:9px;
+      font-family:var(--ff); font-size:.64rem; font-weight:500;
+      letter-spacing:.05em; cursor:pointer; text-decoration:none;
+      transition:background .2s, border-color .2s, box-shadow .2s;
+      white-space:nowrap;
+    }
+    .ab svg { width:10px;height:10px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
+    .ab-out {
+      border:1px solid var(--border); background:rgba(212,163,115,.06); color:var(--gold);
+    }
+    .ab-out svg { stroke:var(--gold); }
+    .ab-out:hover { background:rgba(212,163,115,.14); border-color:var(--border-h); box-shadow:0 0 10px rgba(212,163,115,.2); }
+    .ab-fill {
+      border:1px solid rgba(212,163,115,.45);
+      background:linear-gradient(135deg,rgba(212,163,115,.22),rgba(212,163,115,.10));
+      color:var(--gold-lt);
+    }
+    .ab-fill svg { stroke:var(--gold-lt); }
+    .ab-fill:hover { background:linear-gradient(135deg,rgba(212,163,115,.34),rgba(212,163,115,.18)); box-shadow:0 0 14px rgba(212,163,115,.28); }
+
+    /* ═══════════════════════════════════════
+       C · SCENE SOLUTIONS  (full width, row 3, horizontal)
+    ═══════════════════════════════════════ */
+    .block-c { padding: 1.2rem 1.3rem 1.2rem; }
+
+    .c-head {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom: 1rem;
+    }
+    .c-ey { font-size:.54rem; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); opacity:.70; margin-bottom:.25rem; }
+    .c-ht { font-size:.86rem; font-weight:600; color:var(--ink); line-height:1.38; letter-spacing:.01em; }
+
+    /* 3 equal cards side by side */
+    .c-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .c-slide {
+      border-radius: 13px;
+      padding: .9rem .9rem .85rem;
+      border: 1px solid transparent;
+      display: flex; flex-direction: column; gap: .38rem;
+      position: relative; overflow: hidden;
+      /* no min-height — let content define height naturally */
+    }
+    .c-s1 { background:linear-gradient(135deg,rgba(100,70,200,.16),rgba(140,110,250,.05)); border-color:rgba(120,90,220,.22); }
+    .c-s2 { background:linear-gradient(135deg,rgba(55,145,145,.16),rgba(80,180,178,.05)); border-color:rgba(65,158,155,.22); }
+    .c-s3 { background:linear-gradient(135deg,rgba(212,163,115,.14),rgba(235,195,135,.05)); border-color:rgba(212,163,115,.28); }
+    .cs-tag {
+      font-size:.52rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      padding:.13rem .45rem; border-radius:4px; width:fit-content;
+    }
+    .c-s1 .cs-tag { background:rgba(130,100,240,.18); color:#B8A8F0; }
+    .c-s2 .cs-tag { background:rgba(65,165,160,.18);  color:#7DCFCC; }
+    .c-s3 .cs-tag { background:rgba(212,163,115,.18); color:var(--gold-lt); }
+    .cs-title { font-size:.80rem; font-weight:600; color:var(--ink); line-height:1.45; word-break:keep-all; }
+    .cs-body  { font-size:.61rem; color:var(--ink-2); line-height:1.68; word-break:keep-all; overflow-wrap:break-word; }
+    .cs-body .hl {
+      display:inline; padding:.07rem .32rem; border-radius:4px;
+      font-weight:500; font-size:.60rem;
+    }
+    .c-s1 .hl { background:rgba(130,100,240,.15); color:#B8A8F0; }
+    .c-s2 .hl { background:rgba(65,165,160,.15);  color:#7DCFCC; }
+    .c-s3 .hl { background:rgba(212,163,115,.15); color:var(--gold-lt); }
+    .cs-deco { position:absolute;right:.55rem;bottom:.4rem;font-size:2.2rem;opacity:.07;pointer-events:none;line-height:1; }
+
+    /* ═══════════════════════════════════════
+       D · TECH DEMO  (row 2, right)
+    ═══════════════════════════════════════ */
+    .block-d {
+      padding:1.3rem 1.2rem;
+      display:flex; flex-direction:column;
+      min-height: 230px;
+    }
+    .d-title { font-size:1.1rem; font-weight:700; color:var(--ink); line-height:1.6; letter-spacing:.06em; margin:.5rem 0 .4rem; }
+    .d-desc  { font-size:.68rem; font-weight:300; color:var(--ink-2); line-height:1.9; letter-spacing:.06em; flex:1; }
+    .d-desc strong { color:var(--ink); font-weight:500; }
+    .d-btns  { display:flex; flex-direction:column; gap:.42rem; margin-top:.9rem; }
+    /* subtle cake deco */
+    .block-d::after {
+      content:'🍰'; position:absolute; bottom:.55rem; right:.75rem;
+      font-size:2.5rem; opacity:.07; pointer-events:none; line-height:1;
+    }
+
+    /* ═══════════════════════════════════════
+       E · QUICK PLAN  (row 4, full width horizontal)
+    ═══════════════════════════════════════ */
+    .block-e {
+      padding:1.1rem 1.3rem;
+      display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+    }
+    .e-left { flex-shrink:0; }
+    .e-chip-wrap { margin-bottom:.4rem; }
+    .e-title { font-size:1rem; font-weight:700; color:var(--ink); line-height:1.3; white-space:nowrap; }
+    .e-list  {
+      display:flex; gap:.65rem; flex:1; flex-wrap:wrap;
+      align-items:flex-start;
+    }
+    .e-item  {
+      display:flex; align-items:flex-start; gap:.38rem;
+      font-size:.65rem; font-weight:300; color:var(--ink-2); line-height:1.55;
+      flex:1; min-width:110px;
+    }
+    .e-item::before { content:'✦'; color:var(--gold); font-size:.52rem; flex-shrink:0; margin-top:.14rem; }
+    .e-item strong { display:block; font-size:.70rem; font-weight:600; color:var(--ink); margin-bottom:.1rem; }
+    .e-item span   { display:block; font-size:.64rem; color:var(--ink-2); }
+    .e-link {
+      flex-shrink:0; padding:.52rem .95rem; border-radius:11px;
+      background:rgba(212,163,115,.08); border:1px solid rgba(212,163,115,.22);
+      font-family:var(--ff); font-size:.64rem; font-weight:500;
+      color:var(--gold); letter-spacing:.05em;
+      cursor:pointer; text-decoration:none;
+      display:flex; align-items:center; gap:.4rem; white-space:nowrap;
+      transition:background .2s, box-shadow .2s;
+    }
+    .e-link:hover { background:rgba(212,163,115,.16); box-shadow:0 0 12px rgba(212,163,115,.20); }
+
+    /* ═══════════════════════════════════════
+       CTA  (row 4, full width)
+    ═══════════════════════════════════════ */
+    .block-cta {
+      padding:1.1rem 1.3rem;
+      background:linear-gradient(135deg,rgba(212,163,115,.14),rgba(212,163,115,.06));
+      border:1px solid rgba(212,163,115,.35); border-radius:var(--r);
+      cursor:pointer; text-decoration:none; color:inherit;
+      display:flex; align-items:center; justify-content:space-between;
+      backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      box-shadow:0 0 22px rgba(212,163,115,.12), 0 6px 28px rgba(0,0,0,.5);
+      transition:border-color .3s, box-shadow .3s, transform .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .block-cta:hover {
+      border-color:var(--border-h);
+      box-shadow:0 0 0 1px rgba(212,163,115,.25), 0 0 28px rgba(212,163,115,.30), 0 10px 36px rgba(0,0,0,.55);
+      transform:translateY(-3px);
+    }
+    .block-cta:active { transform:scale(.98); transition:transform .1s; }
+    .cta-l { display:flex; align-items:center; gap:.8rem; }
+    .cta-ico {
+      width:38px; height:38px; border-radius:11px; flex-shrink:0;
+      background:rgba(212,163,115,.12); border:1px solid rgba(212,163,115,.24);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .cta-ico svg { width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; }
+    .cta-main { font-size:.92rem; font-weight:600; color:var(--ink); letter-spacing:.06em; }
+    .cta-sub  { font-size:.60rem; font-weight:300; color:var(--ink-2); margin-top:.1rem; letter-spacing:.06em; }
+    .cta-arr  {
+      width:32px; height:32px; border-radius:50%; flex-shrink:0;
+      border:1px solid rgba(212,163,115,.28);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--gold); font-size:.95rem;
+      transition:transform .25s, background .25s;
+    }
+    .block-cta:hover .cta-arr { transform:translateX(4px); background:rgba(212,163,115,.12); }
+
+    /* ═══════════════════════════════════════
+       BLOCK-W · WORKS SHOWCASE (full width)
+    ═══════════════════════════════════════ */
+    .block-w {
+      padding: 1.3rem 1.3rem 1.2rem;
+    }
+    .w-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .w-eyebrow {
+      font-size:.54rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+      color:var(--gold); opacity:.8;
+    }
+    .w-subtitle {
+      font-size:.60rem; color:var(--ink-3); letter-spacing:.06em;
+    }
+    .w-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .w-card {
+      border-radius: 16px;
+      padding: 1rem 1rem .9rem;
+      display: flex; flex-direction: column; gap: .65rem;
+      position: relative; overflow: hidden;
+    }
+    .w-card.love {
+      background: linear-gradient(145deg, rgba(180,80,120,.14), rgba(120,50,90,.08));
+      border: 1px solid rgba(200,100,140,.25);
+    }
+    .w-card.work {
+      background: linear-gradient(145deg, rgba(80,140,200,.14), rgba(50,90,150,.08));
+      border: 1px solid rgba(100,150,220,.25);
+    }
+    .w-tag {
+      font-size:.50rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      padding:.15rem .55rem; border-radius:4px; display:inline-block; width:fit-content;
+    }
+    .w-tag.love { background:rgba(200,100,140,.18); color:#F0A0C0; border:1px solid rgba(200,100,140,.3); }
+    .w-tag.work { background:rgba(100,150,220,.18); color:#90C0F0; border:1px solid rgba(100,150,220,.3); }
+    .w-name {
+      font-size:.88rem; font-weight:700; color:var(--ink);
+      line-height:1.55; letter-spacing:.06em; word-break:keep-all;
+    }
+    .w-desc {
+      font-size:.68rem; color:var(--ink-2); line-height:1.85;
+      letter-spacing:.06em; word-break:keep-all; flex:1;
+    }
+    .w-actions {
+      display: flex; gap: .42rem; flex-wrap: wrap; margin-top:.1rem;
+    }
+    .w-go {
+      font-size:.62rem; font-weight:600; letter-spacing:.06em;
+      padding:.38rem .75rem; border-radius:8px;
+      border:none; cursor:pointer; font-family:var(--ff);
+      display:inline-flex; align-items:center; gap:.3rem;
+      transition:opacity .18s, transform .15s;
+    }
+    .w-go:active { transform:scale(.96); }
+    .w-go.love { background:linear-gradient(135deg,#C06080,#A04060); color:#fff; }
+    .w-go.work { background:linear-gradient(135deg,#4080C0,#305090); color:#fff; }
+    .w-go:hover { opacity:.88; }
+    .w-note {
+      font-size:.58rem; font-weight:500; letter-spacing:.06em;
+      padding:.36rem .65rem; border-radius:8px;
+      background:rgba(255,255,255,.05); border:1px solid var(--border);
+      color:var(--ink-2); cursor:pointer; font-family:var(--ff);
+      display:inline-flex; align-items:center; gap:.28rem;
+      transition:background .2s, border-color .2s, color .2s;
+    }
+    .w-note svg { width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
+    .w-note:hover { background:rgba(212,163,115,.10); border-color:var(--gold); color:var(--gold-lt); }
+    /* deco emoji */
+    .w-deco {
+      position:absolute; bottom:.6rem; right:.8rem;
+      font-size:1.8rem; opacity:.12; line-height:1; pointer-events:none;
+    }
+
+    /* ═══════════════════════════════════════
+       INSIGHT MODAL (frosted glass)
+    ═══════════════════════════════════════ */
+    .insight-ov {
+      display:none; position:fixed; inset:0; z-index:300;
+      background:rgba(6,4,18,.60);
+      backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+      align-items:flex-end; justify-content:center;
+      padding:0;
+    }
+    .insight-ov.on { display:flex; }
+    .insight-sheet {
+      width:100%; max-width:500px;
+      background:linear-gradient(170deg,rgba(28,24,58,.96),rgba(18,15,42,.98));
+      border:1px solid rgba(212,163,115,.22);
+      border-bottom:none;
+      border-radius:24px 24px 0 0;
+      padding:1.6rem 1.5rem 2rem;
+      position:relative;
+      box-shadow:0 -8px 48px rgba(0,0,0,.7), 0 0 30px rgba(212,163,115,.12);
+      animation:sheetup .38s cubic-bezier(.22,1,.36,1) both;
+      max-height:80dvh; overflow-y:auto;
+    }
+    @keyframes sheetup { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+    /* drag handle */
+    .sheet-handle {
+      width:36px; height:4px; border-radius:2px;
+      background:rgba(212,163,115,.25);
+      margin:0 auto 1.3rem;
+    }
+    .sheet-close {
+      position:absolute; top:1.1rem; right:1.2rem;
+      width:28px; height:28px; border-radius:50%;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      font-size:.68rem; cursor:pointer; color:var(--ink-2);
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .sheet-close:hover { background:rgba(212,163,115,.14); border-color:var(--gold); color:var(--gold); }
+
+    .sheet-eyebrow {
+      font-size:.55rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+      color:var(--gold); opacity:.75; margin-bottom:.5rem;
+    }
+    .sheet-title {
+      font-size:1.15rem; font-weight:700; color:var(--ink);
+      line-height:1.38; word-break:keep-all; margin-bottom:.35rem;
+    }
+    .sheet-subtitle {
+      font-size:.68rem; color:var(--ink-2); line-height:1.7;
+      word-break:keep-all; margin-bottom:1.1rem;
+    }
+
+    .insight-block {
+      background:rgba(255,255,255,.04); border:1px solid rgba(212,163,115,.14);
+      border-radius:14px; padding:.9rem 1rem; margin-bottom:.7rem;
+    }
+    .ib-label {
+      font-size:.55rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      margin-bottom:.4rem;
+    }
+    .ib-label.purple { color:#B8A8F0; }
+    .ib-label.gold   { color:var(--gold); }
+    .ib-label.teal   { color:#7DCFCC; }
+    .ib-text {
+      font-size:.70rem; color:var(--ink-2); line-height:1.75; word-break:keep-all;
+    }
+    .ib-text strong { color:var(--ink); font-weight:600; }
+
+    .sheet-tag-row { display:flex; gap:.45rem; flex-wrap:wrap; margin-top:.9rem; }
+    .sheet-tag {
+      font-size:.58rem; padding:.22rem .65rem; border-radius:999px;
+      background:rgba(212,163,115,.10); border:1px solid rgba(212,163,115,.20);
+      color:var(--gold-lt); letter-spacing:.04em;
+    }
+
+    /* ═══════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════ */
+    footer {
+      position:relative; z-index:1; margin-top:1.4rem;
+      font-size:.56rem; letter-spacing:.1em; color:var(--ink-3); text-align:center;
+      display: flex; flex-direction: column; align-items: center; gap: .75rem;
+    }
+    footer span { color:var(--gold); opacity:.5; }
+    .footer-copy { color: var(--ink-3); }
+    .footer-portal {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .60rem; font-weight: 500; letter-spacing: .10em;
+      color: var(--gold); opacity: .55;
+      padding: .32rem .9rem; border-radius: 999px;
+      border: 1px solid rgba(212,163,115,.18);
+      background: rgba(212,163,115,.05);
+      text-decoration: none;
+      transition: opacity .2s, transform .22s cubic-bezier(.34,1.56,.64,1),
+                  box-shadow .2s, border-color .2s;
+    }
+    .footer-portal:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(212,163,115,.20);
+      border-color: rgba(212,163,115,.38);
+    }
+
+    /* ═══════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════ */
+    .modal-ov {
+      display:none; position:fixed; inset:0; z-index:200;
+      background:rgba(8,6,24,.72); backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:1rem;
+    }
+    .modal-ov.on { display:flex; }
+    .modal-bx {
+      background:linear-gradient(155deg,#16133A,#1E1A42);
+      border:1px solid var(--border); border-radius:var(--r);
+      width:100%; max-width:420px; max-height:90dvh; overflow-y:auto;
+      padding:2rem 1.5rem 1.5rem; position:relative;
+      box-shadow:0 0 36px rgba(212,163,115,.18), 0 24px 64px rgba(0,0,0,.8);
+      animation:rv .38s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes rv { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-x {
+      position:absolute; top:1rem; right:1rem;
+      width:30px; height:30px; border-radius:50%;
+      border:1px solid var(--border); background:rgba(255,255,255,.05);
+      font-size:.7rem; cursor:pointer; color:var(--ink-2);
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s, border-color .2s;
+    }
+    .modal-x:hover { background:rgba(212,163,115,.12); border-color:var(--border-h); }
+
+    /* modal text */
+    .mt  { font-size:1.2rem; font-weight:700; color:var(--ink); margin-bottom:.25rem; }
+    .ms  { font-size:.70rem; font-weight:300; color:var(--ink-2); margin-bottom:1.2rem; }
+    .mr  { height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); margin:.75rem 0; }
+
+    /* Quiz styles */
+    .qq  { font-size:.86rem; font-weight:500; color:var(--ink); margin-bottom:.8rem; line-height:1.65; }
+    .qos { display:flex; flex-direction:column; gap:.48rem; }
+    .qo  {
+      padding:.68rem .9rem; border-radius:11px;
+      border:1px solid rgba(212,163,115,.14); background:rgba(255,255,255,.03);
+      font-size:.76rem; font-family:var(--ff); cursor:pointer;
+      text-align:left; color:var(--ink-2);
+      transition:border-color .2s, background .2s, color .2s, transform .15s;
+    }
+    .qo:hover  { border-color:var(--border-h); background:rgba(212,163,115,.10); color:var(--ink); transform:translateX(3px); }
+    .qo.sel    { border-color:var(--gold-lt); background:rgba(212,163,115,.15); color:var(--ink); }
+    .qprog { display:flex; gap:.3rem; justify-content:center; margin-bottom:.9rem; }
+    .qdot  { width:7px;height:7px;border-radius:50%;background:rgba(212,163,115,.15);transition:background .3s; }
+    .qdot.done { background:var(--gold); }
+    .qri { font-size:2.8rem; margin:.5rem 0; }
+    .qrt { font-size:1.3rem; font-weight:700; color:var(--gold-lt); margin-bottom:.45rem; }
+    .qrd { font-size:.76rem; font-weight:300; color:var(--ink-2); line-height:1.8; }
+    .qrst {
+      margin-top:1rem; padding:.58rem 1.3rem; border-radius:999px;
+      border:1px solid var(--border); background:rgba(212,163,115,.10); color:var(--gold);
+      font-family:var(--ff); font-size:.76rem; cursor:pointer; transition:background .2s;
+    }
+    .qrst:hover { background:rgba(212,163,115,.20); }
+
+    /* Lottery */
+    .lp  { display:flex; flex-wrap:wrap; gap:.36rem; justify-content:center; margin-bottom:.85rem; }
+    .ltk { width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(212,163,115,.12);font-size:.64rem;font-weight:500;display:flex;align-items:center;justify-content:center;color:var(--ink-2);transition:all .3s; }
+    .ltk.win { background:linear-gradient(135deg,#E8593A,#F0A04B);color:#fff;border-color:transparent;transform:scale(1.18);box-shadow:0 4px 14px rgba(232,89,58,.5); }
+    .ldrum { width:148px;height:148px;margin:0 auto .85rem;border-radius:50%;background:linear-gradient(135deg,#E8593A,#F0A04B);box-shadow:0 8px 30px rgba(232,89,58,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s; }
+    .ldrum:hover { transform:scale(1.04); }
+    .ld-in { width:114px;height:114px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.22);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.28rem; }
+    .lnum { font-size:2.2rem;font-weight:700;color:#fff;line-height:1; }
+    .llbl { font-size:.6rem;color:rgba(255,255,255,.72);letter-spacing:.1em; }
+    .lbtn { padding:.62rem 1.7rem;border-radius:999px;border:none;background:linear-gradient(135deg,#E8593A,#F0A04B);color:#fff;font-family:var(--ff);font-size:.82rem;font-weight:500;cursor:pointer;box-shadow:0 4px 16px rgba(232,89,58,.4);transition:transform .15s,box-shadow .15s;display:block;margin:0 auto .85rem; }
+    .lbtn:hover { transform:scale(1.04); }
+    .lbtn:disabled { opacity:.45;cursor:not-allowed;transform:none; }
+    .lres { display:none;padding:.9rem;background:rgba(232,89,58,.08);border-radius:14px;border:1px solid rgba(232,89,58,.2);text-align:center; }
+    .lres.on { display:block; }
+    .lwin { font-size:1.9rem;font-weight:700;color:#E8593A;letter-spacing:.1em; }
+    .lwmsg { font-size:.7rem;color:var(--ink-2);margin-top:.28rem; }
+
+    /* Portal return button */
+    .portal {
+      display:inline-flex; align-items:center; gap:.45rem;
+      padding:.6rem 1.2rem; border-radius:999px;
+      border:1px solid var(--border); background:rgba(212,163,115,.08);
+      color:var(--gold); font-family:var(--ff); font-size:.72rem; font-weight:500;
+      letter-spacing:.06em; text-decoration:none; cursor:pointer;
+      transition:background .25s, border-color .25s, box-shadow .25s;
+    }
+    .portal:hover { background:rgba(212,163,115,.18); border-color:var(--border-h); box-shadow:0 0 18px rgba(212,163,115,.28); }
+    .portal svg { width:12px;height:12px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media (max-width:380px) {
+      .bento { grid-template-columns:1fr 1fr; }
+      /* B full-width on tiny screens */
+      .block-b { grid-column:1/-1; }
+      .block-c { grid-column:1/-1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg">
+    <div class="o o1"></div>
+    <div class="o o2"></div>
+    <div class="o o3"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+
+  <!-- ══════════════════════════
+       BENTO LAYOUT
+  ══════════════════════════ -->
+  <div class="bento">
+
+    <!-- ── A: PROFILE (full width) ── -->
+    <div class="card block-a">
+      <div class="pa-top">
+        <div class="av-ring">
+          <img src="" alt="Becca Lee"
+            onerror="this.outerHTML='<div style=\'width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#3A2060,#D4A373);display:flex;align-items:center;justify-content:center;font-family:Noto Sans TC,sans-serif;font-size:1rem;font-weight:700;color:rgba(234,230,220,.9);letter-spacing:.08em\'>綺英</div>'" />
+        </div>
+        <div>
+          <div class="pa-name-zh gtx">李綺英</div>
+          <span class="pa-name-en">Becca Lee</span>
+        </div>
+      </div>
+
+      <div class="pa-role">行銷人 &nbsp;×&nbsp; AI 工具玩家 &nbsp;·&nbsp; 互動體驗製作人</div>
+
+      <div class="pa-headline">
+        別讓<span class="hl-anti">套版</span>，<br>限制了你的想像力。
+      </div>
+
+      <p class="pa-sub">
+        我不懂程式碼，但我學會了跟 AI 溝通。在這裡，沒有買不到的版型，只有還沒下達的指令。我跳過廠商、跳過框架，用對話把腦袋裡的點子，一個一個變成活生生的網頁。
+      </p>
+
+      <div class="pa-sep"></div>
+
+      <div class="pa-pills">
+        <div class="pill">✦ 拒絕僵化套版</div>
+        <div class="pill">溝通即開發</div>
+        <div class="pill">創意零時差</div>
+      </div>
+    </div>
+
+    <!-- ── W: WORKS SHOWCASE (row 2, full width) ── -->
+    <div class="card block-w">
+      <div class="w-head">
+        <span class="w-eyebrow">✦ AI 互動作品</span>
+        <span class="w-subtitle">不懂程式，跟 AI 一起做出來的</span>
+      </div>
+      <div class="w-grid">
+
+        <!-- 戀愛腦午夜特設門診 -->
+        <div class="w-card love">
+          <span class="w-tag love">心理測驗</span>
+          <div class="w-name">戀愛腦午夜<br>特設門診</div>
+          <div class="w-desc">測測你的執迷不悟程度——附帶處方籤跟隱藏彩蛋。</div>
+          <div class="w-actions">
+            <a href="lovebrain.html" class="w-go love"
+               onclick="gtag('event','btn_click',{event_category:'biolink',event_label:'戀愛腦_play',value:10})">
+              🏥 開始看診
+            </a>
+            <button class="w-note" onclick="openInsight('game1');gtag('event','btn_click',{event_category:'biolink',event_label:'戀愛腦_製作想法',value:5});event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              製作想法
+            </button>
+          </div>
+          <div class="w-deco">🏥</div>
+        </div>
+
+        <!-- 2026 社畜集體逃亡計畫 -->
+        <div class="w-card work">
+          <span class="w-tag work">集體行動</span>
+          <div class="w-name">2026 社畜<br>集體逃亡計畫</div>
+          <div class="w-desc">社畜賓果 + 辭職信產生器 + 即時留言牆。</div>
+          <div class="w-actions">
+            <a href="escape2026.html" class="w-go work"
+               onclick="gtag('event','btn_click',{event_category:'biolink',event_label:'社畜逃亡_play',value:10})">
+              🏃 加入逃亡
+            </a>
+            <button class="w-note" onclick="openInsight('game2');gtag('event','btn_click',{event_category:'biolink',event_label:'社畜逃亡_製作想法',value:5});event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              製作想法
+            </button>
+          </div>
+          <div class="w-deco">🏃</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── B: 企業活動案例 (row 3, left) ── -->
+    <div class="card block-b">
+      <div class="chip" style="margin-bottom:.65rem">製作中 · 企業活動</div>
+      <div class="b-title">
+        <span class="orn">✦</span>OMO 數位導航系統<br>
+        <span style="font-size:.75em;opacity:.50;font-weight:400;letter-spacing:.04em">一日活動，也值得有自己的網頁</span>
+      </div>
+      <div class="b-desc">
+        掃碼報到、行程即時更新、省掉紙本資料——<br>
+        參與者自己找得到答案，主辦方不用被問來問去。
+      </div>
+      <div class="b-btns">
+        <span class="ab ab-out" style="opacity:.45;cursor:default;pointer-events:none">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          敬請期待
+        </span>
+      </div>
+    </div>
+
+    <!-- ── D: 甜點實驗室 (row 3, right) ── -->
+    <div class="card block-d">
+      <div class="chip">製作中 · 品牌活動互動</div>
+      <div class="d-title">
+        🍰 靈魂甜點實驗室<br>
+        <span style="font-size:.75em;opacity:.50;font-weight:400;letter-spacing:.04em">讓顧客掃碼就捨不得走</span>
+      </div>
+      <div class="d-desc">
+        快閃店互動遊戲、掃碼兌獎、手機抽號碼牌——<br>
+        排隊變有趣，顧客自己留更久。
+      </div>
+      <div class="d-btns">
+        <span class="ab ab-out" style="opacity:.45;cursor:default;pointer-events:none">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          敬請期待
+        </span>
+      </div>
+    </div>
+
+    <!-- ── CTA ── -->
+    <a href="#" class="block-cta"
+       onclick="gtag('event','btn_click',{event_category:'biolink',event_label:'聯絡我',value:8})">
+      <div class="cta-l">
+        <div class="cta-ico">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div>
+          <div class="cta-main">有想法就來聊 ✦</div>
+          <div class="cta-sub">對這些作品有感 · 有合作想法 · 或只是想說玩到上癮——都歡迎</div>
+        </div>
+      </div>
+      <div class="cta-arr">›</div>
+    </a>
+
+  </div><!-- /bento -->
+
+  <footer>
+    <a href="#" class="footer-portal" onclick="window.scrollTo({top:0,behavior:'smooth'});gtag('event','btn_click',{event_category:'biolink',event_label:'footer_傳送門',value:2});return false;">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="19 12 5 12"/><polyline points="12 5 5 12 12 19"/></svg>
+      ✦ 回到 Becca 的傳送門
+    </a>
+    <span class="footer-copy">© <span id="yr"></span> 李綺英 Becca Lee · All Rights Reserved</span>
+  </footer>
+
+  <!-- INSIGHT SHEET -->
+  <div id="insight-ov" class="insight-ov" onclick="closeInsight()">
+    <div class="insight-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <button class="sheet-close" onclick="closeInsight()">✕</button>
+      <div id="insight-content"></div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modal-ov" class="modal-ov" onclick="closeMod()">
+    <div class="modal-bx" onclick="event.stopPropagation()">
+      <button class="modal-x" onclick="closeMod()">✕</button>
+      <div id="mc"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    /* ══════════════════════════════════════
+       INSIGHT BOTTOM SHEET
+    ══════════════════════════════════════ */
+    const insightData = {
+      radar: {
+        eyebrow: '製作想法 · AI 靈魂能力鑑定',
+        title: '為什麼做一個「測 AI 使用程度」的遊戲？',
+        subtitle: '我自己也在摸索 AI 工具——做這個測驗一半是想整理自己的使用狀態，一半是想知道身邊的朋友們跟 AI 的距離有多遠。',
+        blocks: [
+          {
+            label: '靈感來源', cls: 'purple',
+            text: '某天我在跟朋友聊 AI，發現大家對「自己會不會用 AI」這件事的認知落差超大。有人覺得用了 ChatGPT 就很厲害，有人已經在玩 Prompt 工程了。<strong>我想做一個讓大家對號入座、又不會覺得被評分的東西。</strong>'
+          },
+          {
+            label: 'AI 在這個作品裡扮演什麼角色', cls: 'gold',
+            text: '這個網頁我完全不會寫程式，是跟 Claude 一起做的。我負責出題目、設計維度、決定語氣；<strong>Claude 負責把我的想法變成能跑的 HTML</strong>。我們來回大概修了十幾次，每次我說「這個感覺不對」它都能抓到我想要的方向。'
+          },
+          {
+            label: '做完之後我學到什麼', cls: 'teal',
+            text: '雷達圖這個視覺比我想像的難搞——六個軸要對應到正確的六邊形頂點，我光是跟 Claude 解釋座標就花了一小時。<strong>但最後看到多邊形動起來的那一刻，真的很值得。</strong>'
+          }
+        ],
+        tags: ['Claude 協作','零程式製作','互動測驗','SVG 動畫']
+      },
+      energy: {
+        eyebrow: '製作想法 · 動態能量抽獎',
+        title: '把無聊的「轉盤抽獎」做成有能量感的東西',
+        subtitle: '每次看到公司尾牙那個轉轉轉的抽獎輪盤就覺得太老派了。我想試試看能不能做出一個「讓人想一直按」的抽獎體驗。',
+        blocks: [
+          {
+            label: '靈感來源', cls: 'gold',
+            text: '某個深夜我在玩手遊，覺得那種「充能 → 釋放」的節奏感很爽——按下去有反饋、有期待感、有不確定性。<strong>我就問 Claude：「能不能把這個感覺做成抽獎？」</strong>然後我們就開始試了。'
+          },
+          {
+            label: 'AI 在這個作品裡扮演什麼角色', cls: 'purple',
+            text: '這個功能最難的部分是「什麼時候揭曉結果」——我不想讓使用者覺得是假的，但又要有懸念感。<strong>Claude 幫我設計了一個「至少按 3–5 次才揭曉」的機制</strong>，讓每次充能都有意義，而不是按一下就結束。'
+          },
+          {
+            label: '做完之後我學到什麼', cls: 'teal',
+            text: '六條柱子的顏色我改了大概五六次。最後選這組配色（紫、金、青、橘）純粹是我自己覺得「看起來很有活力」。<strong>沒有理論，就是眼睛說好就好。</strong>這大概是整個製作過程裡最直覺的決定。'
+          }
+        ],
+        tags: ['Claude 協作','活動互動設計','可變獎勵','能量感 UX']
+      },
+      game1: {
+        eyebrow: '製作想法 · 戀愛腦午夜特設門診',
+        title: '我花了一個週末，做了一個診療愛情病的網頁',
+        subtitle: '起點是我跟朋友說「你戀愛腦也太嚴重了」，然後我們就說應該要有一個測驗來鑑定一下。',
+        blocks: [
+          {
+            label: '靈感來源', cls: 'purple',
+            text: '有一種心理測驗是包裝成「診所」的形式——有問診、有診斷書、有處方籤。我覺得這個框架超適合拿來嘲笑（關心）朋友的感情狀態。<strong>所以我就把這個畫面跟 Claude 說了，然後我們一起把它做出來。</strong>'
+          },
+          {
+            label: '製作過程中最有趣的部分', cls: 'gold',
+            text: '隱藏彩蛋是我自己偷偷加的。我跟 Claude 說「如果有人連續點同一個答案三次以上，要觸發一個特別的結果」——<strong>Claude 居然真的幫我設計了一段對話，說這個病人需要立即住院觀察。</strong>我笑了很久。'
+          },
+          {
+            label: '這個作品用了什麼技術', cls: 'teal',
+            text: '純 HTML + CSS + JS，沒有任何框架，單一檔案就能跑。<strong>我不懂程式，但我懂我想要什麼感覺</strong>——深夜藍的配色、像診斷書一樣的結果頁、點擊時的輕微震動感。Claude 把這些描述都翻譯成了程式碼。'
+          }
+        ],
+        tags: ['戀愛腦','心理測驗','Claude 協作','隱藏彩蛋','純 HTML']
+      },
+      game2: {
+        eyebrow: '製作想法 · 2026 社畜集體逃亡計畫',
+        title: '一場讓社畜一起喊出來的集體行動',
+        subtitle: '「想辭職」這個念頭大概每個上班族每週都有——我想做一個讓大家不用自己一個人憋著的地方。',
+        blocks: [
+          {
+            label: '靈感來源', cls: 'teal',
+            text: '年初那陣子我自己也在職涯迷惘期，某天突然想：如果有一個網站可以讓所有社畜都說出「我也是」，會不會很療癒？<strong>於是就有了賓果卡（社畜的日常）、辭職信產生器、還有即時留言牆。</strong>'
+          },
+          {
+            label: '我學會的技能', cls: 'gold',
+            text: '這個專案讓我真的搞懂了怎麼串雲端後台。留言牆的資料要即時存進 Google Sheets、再拉回來顯示——我從零開始研究，搞懂「什麼是 API」、怎麼寫 Apps Script、怎麼讓前端跟後端溝通。<strong>現在這個技能已經變成我的了。</strong>'
+          },
+          {
+            label: '做這個作品的心情', cls: 'purple',
+            text: '我做的時候一直在笑，因為賓果的格子內容都是我自己的真實經歷。<strong>「下班前被要求加急任務」「會議結束後才發現可以用一封信解決」</strong>——這些都是我真的遇到過的，所以才能做得這麼準。'
+          }
+        ],
+        tags: ['社畜文化','Google Sheets 後端','留言牆','Claude 協作','集體療癒']
+      },
+      work_omo: {
+        eyebrow: '製作中 · OMO 數位導航系統',
+        title: '把活動 App 塞進一個網頁',
+        subtitle: '活動現場常見問題：行程在哪？我要去哪個攤位？任務完成了嗎？我想做一個讓參與者不用下載任何東西就能用的互動導覽。',
+        blocks: [
+          {
+            label: '什麼是 OMO', cls: 'purple',
+            text: 'Online-Merge-Offline——<strong>線上線下融合</strong>。掃一個 QR code 就能看地圖、解鎖任務、收到即時通知。不需要 App，一個網頁搞定所有事。'
+          },
+          {
+            label: '用 AI 製作的過程', cls: 'gold',
+            text: '我把整個活動流程畫成草圖，然後跟 Claude 說「我要讓參與者做完三個任務才能解鎖最後一個驚喜」——<strong>Claude 幫我設計了分段解鎖的邏輯</strong>，我完全不用自己想資料結構怎麼跑。'
+          },
+          {
+            label: '目前進度', cls: 'teal',
+            text: '核心功能已完成，正在做視覺微調跟測試。<strong>完成後會放上來，歡迎關注。</strong>'
+          }
+        ],
+        tags: ['OMO','活動互動','Claude 協作','QR 任務解鎖','製作中']
+      }
+    };
+
+    function openInsight(type) {
+      const d = insightData[type];
+      const ov = document.getElementById('insight-ov');
+      document.getElementById('insight-content').innerHTML = `
+        <div class="sheet-eyebrow">${d.eyebrow}</div>
+        <div class="sheet-title">${d.title}</div>
+        <div class="sheet-subtitle">${d.subtitle}</div>
+        ${d.blocks.map(b => `
+          <div class="insight-block">
+            <div class="ib-label ${b.cls}">${b.label}</div>
+            <div class="ib-text">${b.text}</div>
+          </div>
+        `).join('')}
+        <div class="sheet-tag-row">
+          ${d.tags.map(t => `<span class="sheet-tag">${t}</span>`).join('')}
+        </div>
+      `;
+      ov.classList.add('on');
+      document.body.style.overflow = 'hidden';
+      gtag('event','insight_open',{event_category:'biolink',event_label:`邏輯拆解_${type}`});
+    }
+
+    function closeInsight() {
+      document.getElementById('insight-ov').classList.remove('on');
+      document.body.style.overflow = '';
+    }
+    const sf=document.getElementById('stars');
+    for(let i=0;i<80;i++){
+      const s=document.createElement('div'); s.className='star';
+      const z=Math.random()*1.7+.4;
+      s.style.cssText=`width:${z}px;height:${z}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${Math.random()*5+3}s;animation-delay:-${Math.random()*8}s;`;
+      sf.appendChild(s);
+    }
+
+    /* Modal */
+    const ov=document.getElementById('modal-ov');
+    const mc=document.getElementById('mc');
+    function openModal(t){ov.classList.add('on');document.body.style.overflow='hidden';if(t==='quiz')renderQuiz();if(t==='lottery')renderLottery();}
+    function closeMod(){ov.classList.remove('on');document.body.style.overflow='';}
+
+    /* Quiz */
+    const qd=[
+      {q:'你在規劃一場活動時，最先想到的是？',o:['整體視覺與氛圍設計','如何創造最大參與感','精準觸達目標受眾','數據追蹤與成效分析']},
+      {q:'你的品牌如果是一種飲料，你覺得它是？',o:['香檳——優雅、奢華','手搖飲——親切、多變','美式咖啡——簡潔、有效率','調酒——創意、不可預測']},
+      {q:'面對一個新專案，你通常怎麼開始？',o:['先做一張心智圖','直接開會腦力激盪','查競品與市場資料','先問：這能解決什麼痛點？']}
+    ];
+    const qr=[
+      {icon:'🌟',title:'品牌魔法師',desc:'你擅長將創意轉化為令人難忘的品牌體驗，能快速捕捉趨勢，讓品牌在競爭中脫穎而出。'},
+      {icon:'🔥',title:'社群點火者',desc:'你天生懂得如何製造話題、激發參與，能讓冷漠的受眾變成忠實擁護者。'},
+      {icon:'🎯',title:'策略精準手',desc:'你是數據與邏輯的化身，能在複雜市場中找出最有效路徑，讓每分預算創造最大效益。'},
+      {icon:'💡',title:'AI 轉型先鋒',desc:'你對新技術充滿好奇，善於跨界整合，最擅長用創新思維打破框架，帶來突破性成長。'}
+    ];
+    let qa=[];
+    function renderQuiz(){
+      qa=[];
+      mc.innerHTML=`<div class="mt">🧠 測出你的品牌原型</div><p class="ms">3 題快問快答，秒懂你的行銷風格</p><div class="qprog">${qd.map((_,i)=>`<div class="qdot" id="qd${i}"></div>`).join('')}</div><div id="qb"></div>`;
+      showQ(0);
+    }
+    function showQ(i){
+      if(i>=qd.length){showQR();return;}
+      const d=qd[i];
+      document.getElementById('qb').innerHTML=`<p class="qq">Q${i+1}. ${d.q}</p><div class="qos">${d.o.map((o,j)=>`<button class="qo" onclick="pickQ(${i},${j},this)">${o}</button>`).join('')}</div>`;
+      for(let k=0;k<i;k++) document.getElementById(`qd${k}`).classList.add('done');
+    }
+    function pickQ(qi,oi,el){
+      document.querySelectorAll('.qo').forEach(b=>b.classList.remove('sel'));
+      el.classList.add('sel'); qa[qi]=oi;
+      setTimeout(()=>showQ(qi+1),380);
+    }
+    function showQR(){
+      const r=qr[qa.reduce((a,b)=>a+b,0)%qr.length];
+      for(let i=0;i<qd.length;i++) document.getElementById(`qd${i}`).classList.add('done');
+      document.getElementById('qb').innerHTML=`<div style="text-align:center"><div class="qri">${r.icon}</div><div class="qrt">${r.title}</div><p class="qrd">${r.desc}</p><div class="mr"></div><button class="qrst" onclick="renderQuiz()">再測一次</button></div>`;
+    }
+
+    /* Lottery */
+    function renderLottery(){
+      const n=Array.from({length:20},(_,i)=>String(i+1).padStart(3,'0'));
+      mc.innerHTML=`
+        <div class="mt">🔥 企業抽獎系統</div>
+        <p class="ms">模擬現場抽獎體驗，一鍵開抽</p>
+        <div class="lp">${n.map(x=>`<div class="ltk" id="lt${x}">${x}</div>`).join('')}</div>
+        <div class="ldrum" onclick="spinL()">
+          <div class="ld-in"><div class="lnum" id="ln">？</div><div class="llbl">點擊開抽</div></div>
+        </div>
+        <button class="lbtn" id="lb" onclick="spinL()">🎰 開始抽獎！</button>
+        <div class="lres" id="lr">
+          <div style="font-size:1.4rem;margin-bottom:.3rem">🎉</div>
+          <div class="lwin" id="lw"></div>
+          <p class="lwmsg">截圖留存，憑號碼兌換獎品</p>
+          <button onclick="renderLottery()" style="margin-top:.65rem;padding:.42rem .95rem;border-radius:999px;border:1px solid var(--border);background:rgba(212,163,115,.10);color:var(--gold);font-family:var(--ff);font-size:.7rem;cursor:pointer">再抽一次</button>
+        </div>
+        <div class="mr"></div>
+        <div style="text-align:center">
+          <a href="#" class="portal" onclick="closeMod()">
+            <svg viewBox="0 0 24 24"><polyline points="19 12 5 12"/><polyline points="12 5 5 12 12 19"/></svg>
+            ✦ 回到 Becca 的傳送門
+          </a>
+        </div>`;
+    }
+    function spinL(){
+      const btn=document.getElementById('lb'),ne=document.getElementById('ln');
+      if(!btn||btn.disabled)return; btn.disabled=true;
+      const tot=20,win=Math.floor(Math.random()*tot)+1,ws=String(win).padStart(3,'0');
+      let tk=0;
+      const iv=setInterval(()=>{
+        tk++;
+        ne.textContent=String(Math.floor(Math.random()*tot)+1).padStart(3,'0');
+        if(tk>=32){
+          clearInterval(iv); ne.textContent=ws;
+          const wt=document.getElementById(`lt${ws}`);
+          if(wt){wt.classList.add('win');wt.scrollIntoView({behavior:'smooth',block:'nearest'});}
+          document.getElementById('lw').textContent=`No. ${ws}`;
+          document.getElementById('lr').classList.add('on');
+          gtag('event','lottery_drawn',{event_category:'biolink',event_label:'抽獎Demo'});
+        }
+      },tk<20?65:120);
+    }
+  </script>
+</body>
+</html>
